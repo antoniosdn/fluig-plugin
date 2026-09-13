@@ -1,0 +1,9 @@
+{
+  "name": "fluig",
+  "description": "Especialista Fluig: datasets ECMA 5/Rhino, formulários, widgets, layouts, Style Guide e fluigcli. Regras de cliente ficam no AGENTS.md do projeto.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Antonio",
+    "url": "https://github.com/antoniosdn"
+  }
+}

@@ -1,0 +1,8 @@
+.DS_Store
+*.env
+*.env.local
+.fluigcli/teste.env
+sessions.json
+node_modules/
+.idea/
+.vscode/

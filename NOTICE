@@ -1,0 +1,17 @@
+Este plugin inclui trechos do pacote oficial totvs/fluig-agent-skills
+(https://github.com/totvs/fluig-agent-skills), licença MIT.
+
+Arquivos derivados:
+- context/*
+- examples/widget/*
+- examples/layout/*
+- skills/fluig-scaffolding-widget
+- skills/fluig-scaffolding-layout
+- skills/fluig-style-guide-helpers
+- skills/fluig-code-review
+- skills/fluig-review-security
+- skills/fluig-review-accessibility
+- skills/fluig-review-performance
+- skills/fluig-dark-mode
+
+A TOTVS não se responsabiliza por código gerado por ferramentas de IA.

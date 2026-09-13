@@ -1,0 +1,11 @@
+{
+  "name": "fluig",
+  "version": "0.1.0",
+  "description": "Skills e regras para customização TOTVS Fluig: datasets Rhino/ECMA 5, formulários, widgets, layouts, Style Guide e fluigcli.",
+  "author": {
+    "name": "Antonio",
+    "url": "https://github.com/antoniosdn"
+  },
+  "license": "MIT",
+  "keywords": ["fluig", "totvs", "dataset", "widget", "workflow"]
+}
