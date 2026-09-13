@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "ascendra",
-  "description": "Plugins internos Ascendra para desenvolvimento TOTVS.",
+  "name": "fluig",
+  "description": "Plugin Fluig para Claude Code e Cursor.",
   "owner": {
     "name": "Antonio",
     "url": "https://github.com/antoniosdn"

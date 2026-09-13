@@ -25,7 +25,7 @@ Não usar as skills TOTVS de scaffold de form/dataset — o padrão daqui é
 
 ```
 /plugin marketplace add antoniosdn/fluig-plugin
-/plugin install fluig@ascendra
+/plugin install fluig@fluig
 ```
 
 ## Instalação (Cursor)
