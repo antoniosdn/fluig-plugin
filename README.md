@@ -30,19 +30,18 @@ Não usar as skills TOTVS de scaffold de form/dataset — o padrão daqui é
 
 ## Instalação (Cursor)
 
-Repositório local:
+O painel **Plugins** só lista o que veio de marketplace. Pasta
+`~/.cursor/plugins/local/` não aparece se “Allow Local Plugin Imports”
+estiver desligado (padrão em Teams/Enterprise).
 
-```
-/Users/antoniosdn/DESENV/fluig-plugin
-```
+Instalar como o ADVPL:
 
-Symlink para descoberta imediata:
+1. Cursor Dashboard → **Plugins** → **Add Marketplace** → **Import from Repo**
+2. Repo: `https://github.com/antoniosdn/fluig-plugin`
+3. Em Customize → Plugins, **Install** em `fluig`
 
-```
-ln -sfn /Users/antoniosdn/DESENV/fluig-plugin ~/.cursor/plugins/local/fluig
-```
-
-Ou adicione o repo como plugin a partir do GitHub depois do clone.
+Sem dashboard de time: Customize → Plugins → adicionar a partir do GitHub
+com a mesma URL.
 
 ## No projeto do cliente
 

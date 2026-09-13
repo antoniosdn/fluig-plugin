@@ -1,0 +1,17 @@
+{
+  "name": "fluig",
+  "owner": {
+    "name": "Antonio",
+    "url": "https://github.com/antoniosdn"
+  },
+  "metadata": {
+    "description": "Plugin Fluig para Cursor (skills de dataset, form, widget e fluigcli)."
+  },
+  "plugins": [
+    {
+      "name": "fluig",
+      "source": "./",
+      "description": "Customização TOTVS Fluig: datasets, formulários, widgets, layouts e fluigcli."
+    }
+  ]
+}
