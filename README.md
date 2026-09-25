@@ -10,7 +10,7 @@ Substitui a cópia de `.agents/skills/` em cada cliente — o mesmo motivo do
 
 | Pasta | O que tem |
 |---|---|
-| `skills/` | Dataset, form, validação, orquestração, widget/layout, Style Guide, review, fluigcli |
+| `skills/` | Dataset, form, validação, orquestração, widget/layout, Style Guide, review, fluigcli, teste funcional de processos (`fluig-tester`) |
 | `context/` | Arquitetura, convenções, tecnologias e Style Guide (origem: TOTVS fluig-agent-skills) |
 | `examples/` | Widget e layout mínimos oficiais |
 | `rules/` | ECMA 5 / Rhino em `datasets/` e `workflow/scripts/` |
@@ -56,6 +56,11 @@ regras de publicação.
 `fluig-style-guide-helpers`, `fluig-*-review` e `fluig-dark-mode` vêm do
 [totvs/fluig-agent-skills](https://github.com/totvs/fluig-agent-skills) (MIT).
 Testadas pela TOTVS em Fluig 2.0 (Voyager). Em 1.8.x revisar o resultado.
+
+## Créditos
+
+A skill `fluig-tester` é texto próprio, inspirado na metodologia de
+[matheusnevoa/fluig-tester](https://github.com/matheusnevoa/fluig-tester).
 
 ## Licença
 

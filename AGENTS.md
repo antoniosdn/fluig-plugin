@@ -27,6 +27,7 @@ Responder e documentar em Português (BR). Preservar nomes técnicos do Fluig
 | Publicar / importar / diff / audit / deploy / log / helper | `fluig-cli` |
 | Vários arquivos ou risco Rhino | `fluig-orquestracao` |
 | Review de UI / segurança / a11y | `fluig-code-review` e irmãs |
+| Teste funcional de processo pela interface | `fluig-tester` |
 
 Não usar scaffold oficial TOTVS de form ou dataset. Query Store, se o cliente
 tiver, está no `AGENTS.md` do projeto — não inventar endpoint.
