@@ -24,7 +24,7 @@ Responder e documentar em Português (BR). Preservar nomes técnicos do Fluig
 | `beforeSendValidate` / obrigatório | `fluig-validacao` |
 | Widget WCM nova | `fluig-scaffolding-widget` |
 | Layout WCM novo | `fluig-scaffolding-layout` |
-| Publicar / importar / log / helper | `fluig-cli` |
+| Publicar / importar / diff / audit / deploy / log / helper | `fluig-cli` |
 | Vários arquivos ou risco Rhino | `fluig-orquestracao` |
 | Review de UI / segurança / a11y | `fluig-code-review` e irmãs |
 
