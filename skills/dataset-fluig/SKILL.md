@@ -55,6 +55,12 @@ usar AskUserQuestion.
 > Integrações com path específico do cliente (Query Store, Lyceum, etc.)
 > ficam no `AGENTS.md` do repositório — não copiar endpoint de outro tenant.
 
+> Assinaturas exatas de `DatasetFactory.getDataset` / `createConstraint` e
+> `ConstraintType`: `context/architecture.md`, seção "API pública de Dataset —
+> assinaturas". Para ler linhas de pai-filho de um formulário (constraints
+> `documentid` + `tablename` + `metadata#active`): `context/conventions.md`,
+> seção "Consumo via Dataset".
+
 ### 2. Escrever o cabeçalho JSDoc (obrigatório, sempre primeiro)
 
 Bloco JSDoc **antes** da função principal, no padrão do AGENTS.md:

@@ -158,6 +158,9 @@ os handlers nos arquivos JS corretos. Detalhes e markup em `references/snippets.
 - Botão "Adicionar" → `wdkAddChild('tablename')`; "Excluir" → `fnWdkRemoveChild(this)`
   com guarda para não remover a linha-template.
 - Handlers em `custom.js`; validação por linha em `custom_valida.js`.
+- Ler as linhas fora do form (relatório, dataset, integração): dataset do
+  formulário com `documentid` + `tablename` + `metadata#active` — ver
+  `context/conventions.md`, seção "Tabela Pai x Filho (Form)" / "Consumo via Dataset".
 
 ### zoom
 - `<input type="zoom" data-zoom="{...}">` com `displayKey`, `datasetId`, `fields`.

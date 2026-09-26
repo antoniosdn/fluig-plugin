@@ -13,6 +13,10 @@ Arquivos derivados:
 - skills/fluig-review-accessibility
 - skills/fluig-review-performance
 - skills/fluig-dark-mode
+- skills/fluig-validate-security
+- skills/fluig-optimize-performance
+- skills/fluig-improve-accessibility
+- skills/fluig-migrate-jquery-es6 (com nota própria sobre o Rhino)
 
 A TOTVS não se responsabiliza por código gerado por ferramentas de IA.
 

@@ -1,6 +1,6 @@
 {
   "name": "fluig",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Skills e regras para customização TOTVS Fluig: datasets Rhino/ECMA 5, formulários, workflow, widgets, layouts, Style Guide e fluigcli.",
   "author": {
     "name": "Antonio",
