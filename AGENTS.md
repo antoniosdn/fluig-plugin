@@ -21,6 +21,7 @@ Responder e documentar em Português (BR). Preservar nomes técnicos do Fluig
 |---|---|
 | Dataset novo ou refatorar | `dataset-fluig` / `fluig-dataset` |
 | Form, zoom, pai-filho, anexo | `form-fluig` |
+| Evento de workflow, `displayFields`/`enableFields`/`validateForm`, service task, gateway, `.process` | `fluig-workflow` |
 | `beforeSendValidate` / obrigatório | `fluig-validacao` |
 | Widget WCM nova | `fluig-scaffolding-widget` |
 | Layout WCM novo | `fluig-scaffolding-layout` |

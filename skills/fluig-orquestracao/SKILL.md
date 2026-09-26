@@ -55,7 +55,8 @@ subagentes simultâneos pesam mais no custo que a escolha do tier.
 - `datasets/`: exigir ECMA 5/Rhino, JSDoc, constraints validadas, tratamento de
   erro e ausência de credenciais hardcoded.
 - `workflow/scripts/` e eventos Fluig: confirmar compatibilidade ECMA 5 quando
-  executarem no servidor ou no motor do workflow.
+  executarem no servidor ou no motor do workflow. Contratos, roteiro de leitura
+  do `.process` e diagnóstico: skill `fluig-workflow`.
 - `forms/`: validar JavaScript de navegador, `beforeSendValidate`, tabelas
   pai/filho e dependências incluídas no formulário.
 - `workflow/diagrams/`: consultar o diagrama antes de assumir estados, tarefas,
