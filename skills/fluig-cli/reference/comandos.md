@@ -74,6 +74,20 @@ não logins.
 `widget new <code>`, `list`, `import <code>` (helper; grava `wcm/widget/<code>/`),
 `export <code>` (nativo; `--build` para SPA).
 
+`export` monta o WAR em memória a partir da pasta, sem usar `target/`:
+
+| Origem | No WAR |
+|---|---|
+| `src/main/resources/**` | `WEB-INF/classes/**` (`application.info`, `.ftl`, `.properties`) |
+| `src/main/webapp/WEB-INF/**` | `WEB-INF/**` |
+| `src/main/webapp/resources/**` | `resources/**` (CSS, JS, imagens) |
+
+O deploy nativo identifica o destino só pelo nome `<code>.war`. Se o código já
+existir no servidor como **layout**, o `export` recusa; `--force` sobrescreve.
+É assim que se publica layout: `scripts/publicar-layout.sh <código> --server
+<nome>` (atalho temporário em `wcm/widget/`, `--force`, conferência dos JS por
+HTTP). Não alterar `application.type=layout` para "enganar" a CLI.
+
 ## diff / deploy / audit / watch / dev
 
 | Comando | Efeito |

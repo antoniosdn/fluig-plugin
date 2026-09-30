@@ -106,6 +106,7 @@ Detalhes, flags e armadilhas por grupo: [reference/comandos.md](reference/comand
 |---|---|
 | Baixar tudo de um servidor em uso | `clone --only forms,datasets,...` ou `--all` |
 | Publicar artefato | `dataset\|form\|event\|mechanism\|widget export` |
+| Publicar layout WCM (a CLI não tem `layout`) | `scripts/publicar-layout.sh <código> --server <nome>` |
 | Script de processo sem versão nova (helper) | `workflow export <arquivo>` |
 | Versão nova do processo | `workflow publish <processId> --events a,b` |
 | Script local × publicado | `workflow diff <arquivo\|processId>` |
@@ -143,3 +144,11 @@ versão do helper. A FluiggersWidget da extensão VS Code é outro componente.
 - Status em `PROCES_WORKFLOW`: 0 aberta, **1 cancelada, 2 concluída** — usar
   `request list --status` em vez de SQL.
 - `widget import` grava em `wcm/widget/<code>/`. Não há `widget delete`.
+- Layout: não dizer que "não dá para publicar". Usar
+  `scripts/publicar-layout.sh`, que cria um atalho temporário
+  `wcm/widget/<código>` → `../layout/<código>`, roda `widget export --force`,
+  remove o atalho e confere os JS servidos. O deploy nativo usa só o nome
+  `<código>.war`, então `--force` sobrescreve o layout de mesmo código. O WAR é
+  montado do `src/` na hora, e `target/*.war` é ignorado. Em `env=prod` o
+  script só roda em terminal interativo (sem `--yes`): entregar o comando para
+  a pessoa rodar.

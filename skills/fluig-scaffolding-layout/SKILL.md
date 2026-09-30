@@ -200,6 +200,8 @@ Ao concluir, apresente um resumo curto:
 - **Arquivos gerados:** lista.
 - **Pendências manuais:** ex.: `icon.png` real, coordenadas do `pom.xml` pai, traduções `en_US`/`es` marcadas com TODO, **CSS próprio criado sem pedido explícito (revisar)**.
 
+Para publicar, use a skill `fluig-cli` (`scripts/publicar-layout.sh <código> --server <nome>`), sempre com autorização explícita para escrever no servidor.
+
 ## Política de Fallback
 
 - Faltando **nome**, **slots** ou **slot padrão**: solicitar antes de gerar.
