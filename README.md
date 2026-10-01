@@ -61,6 +61,10 @@ Testadas pela TOTVS em Fluig 2.0 (Voyager). Em 1.8.x revisar o resultado.
 
 ## Créditos
 
+A skill `fluig-cli` é texto próprio e opera o
+[alorenco/fluig-cli](https://github.com/alorenco/fluig-cli), CLI não oficial
+que é a base da publicação, do audit e do diff deste plugin.
+
 A skill `fluig-tester` é texto próprio, inspirado na metodologia de
 [matheusnevoa/fluig-tester](https://github.com/matheusnevoa/fluig-tester).
 
