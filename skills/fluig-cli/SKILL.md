@@ -1,6 +1,6 @@
 ---
 name: fluig-cli
-description: Publica, audita e sincroniza artefatos Fluig com o fluigcli (alorenco/fluig-cli). Use ao importar/exportar form, dataset, evento global, mecanismo, widget ou script de processo; ao comparar local × servidor (diff), auditar código (audit, regras Rhino/Style Guide), montar release (deploy --plan), clonar servidor, ler log, ou quando mencionar fluigcli / fluigcliHelper.
+description: Publica, audita e sincroniza artefatos Fluig com o fluigcli (alorenco/fluig-cli). Use ao importar/exportar form, dataset, evento global, mecanismo, widget, layout WCM ou script de processo; ao comparar local × servidor (diff), auditar código (audit, regras Rhino/Style Guide), montar release (deploy --plan), clonar servidor, ler log, ou quando mencionar fluigcli / fluigcliHelper.
 ---
 
 # fluigcli
@@ -105,8 +105,7 @@ Detalhes, flags e armadilhas por grupo: [reference/comandos.md](reference/comand
 | Objetivo | Comando |
 |---|---|
 | Baixar tudo de um servidor em uso | `clone --only forms,datasets,...` ou `--all` |
-| Publicar artefato | `dataset\|form\|event\|mechanism\|widget export` |
-| Publicar layout WCM (a CLI não tem `layout`) | `scripts/publicar-layout.sh <código> --server <nome>` |
+| Publicar artefato | `dataset\|form\|event\|mechanism\|widget\|layout export` |
 | Script de processo sem versão nova (helper) | `workflow export <arquivo>` |
 | Versão nova do processo | `workflow publish <processId> --events a,b` |
 | Script local × publicado | `workflow diff <arquivo\|processId>` |
@@ -144,11 +143,9 @@ versão do helper. A FluiggersWidget da extensão VS Code é outro componente.
 - Status em `PROCES_WORKFLOW`: 0 aberta, **1 cancelada, 2 concluída** — usar
   `request list --status` em vez de SQL.
 - `widget import` grava em `wcm/widget/<code>/`. Não há `widget delete`.
-- Layout: não dizer que "não dá para publicar". Usar
-  `scripts/publicar-layout.sh`, que cria um atalho temporário
-  `wcm/widget/<código>` → `../layout/<código>`, roda `widget export --force`,
-  remove o atalho e confere os JS servidos. O deploy nativo usa só o nome
-  `<código>.war`, então `--force` sobrescreve o layout de mesmo código. O WAR é
-  montado do `src/` na hora, e `target/*.war` é ignorado. Em `env=prod` o
-  script só roda em terminal interativo (sem `--yes`): entregar o comando para
-  a pessoa rodar.
+- Layout WCM: `layout export <código>` (fluigcli ≥ 0.9.6). Republicar um
+  layout existente não pede `--force`. Se o código existir no servidor como
+  **widget**, o comando recusa (exit 2), pois o deploy usa só o nome
+  `<código>.war` e sobrescreveria o widget; `--force` só com autorização. A
+  instalação é assíncrona: conferir os JS servidos em `/<código>/resources/...`
+  antes de dar como publicado. `layout import` exige helper ≥ 0.12.0.

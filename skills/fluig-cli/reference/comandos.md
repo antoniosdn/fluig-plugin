@@ -20,9 +20,9 @@ Config versionável em `.fluigcli/servers.json`; usuário e padrão pessoal em
 
 ## clone
 
-`clone --all` ou `--only forms,datasets,workflows,events,mechanisms,widgets`.
-Não-interativo exige um dos dois. Widgets exigem helper (pulados no `--all`,
-exit 7 no `--only widgets`). `workflows` = só scripts de evento.
+`clone --all` ou `--only forms,datasets,workflows,events,mechanisms,widgets,layouts`.
+Não-interativo exige um dos dois. Widgets e layouts exigem helper (pulados no
+`--all`, exit 7 no `--only widgets`). `workflows` = só scripts de evento.
 
 ## dataset
 
@@ -84,16 +84,28 @@ não logins.
 
 O deploy nativo identifica o destino só pelo nome `<code>.war`. Se o código já
 existir no servidor como **layout**, o `export` recusa; `--force` sobrescreve.
-É assim que se publica layout: `scripts/publicar-layout.sh <código> --server
-<nome>` (atalho temporário em `wcm/widget/`, `--force`, conferência dos JS por
-HTTP). Não alterar `application.type=layout` para "enganar" a CLI.
+
+## layout
+
+Requer fluigcli ≥ 0.9.6.
+
+| Comando | Efeito |
+|---|---|
+| `layout list [--all]` | layouts do servidor; `--all` inclui os internos da plataforma |
+| `layout export <code> [--force]` | publica `wcm/layout/<code>/` (exige `application.type=layout`); WAR montado como no `widget export` |
+| `layout import <code>... \| --all` | baixa para `wcm/layout/<code>/` (helper ≥ 0.12.0; o `.war` nem sempre se chama `<code>.war`) |
+
+Republicar um layout existente não pede `--force`. Se o código existir como
+**widget**, o `export` recusa (exit 2); `--force` sobrescreve o WAR do widget.
+A instalação é assíncrona: conferir os JS servidos em
+`/<code>/resources/...` antes de dar como publicado.
 
 ## diff / deploy / audit / watch / dev
 
 | Comando | Efeito |
 |---|---|
 | `diff [<caminho>...]` | local × servidor; `--json` traz `data.counts` |
-| `deploy --plan release.json` | passos `dataset`, `event`, `mechanism`, `form`, `widget`, `workflow` (publish), `db` (SQL de leitura); para no 1º erro; `--from N` retoma; `--dry-run` valida sem escrever; trava de prod pedida uma vez; plano nunca contém senha |
+| `deploy --plan release.json` | passos `dataset`, `event`, `mechanism`, `form`, `widget`, `layout`, `workflow` (publish), `db` (SQL de leitura); para no 1º erro; `--from N` retoma; `--dry-run` valida sem escrever; trava de prod pedida uma vez; plano nunca contém senha |
 | `audit [<caminho>...] [--process id] [--fix] [--save-baseline]` | linter local; exit 1 = reprovado |
 | `watch` | publica ao salvar; só dev/hml; nunca cria artefato ou versão |
 | `dev` | proxy local do portal com live reload e preview de form |
