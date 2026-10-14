@@ -1,6 +1,6 @@
 # fluig-plugin
 
-Plugin de skills para customização **TOTVS Fluig** (Cursor e Claude Code).
+Plugin de skills para customização **TOTVS Fluig** (Claude Code).
 
 Substitui a cópia de `.agents/skills/` em cada cliente — o mesmo motivo do
 `advpl-protheus-plugin`. O repositório do cliente fica só com o que é dele
@@ -10,7 +10,7 @@ Substitui a cópia de `.agents/skills/` em cada cliente — o mesmo motivo do
 
 | Pasta | O que tem |
 |---|---|
-| `skills/` | Dataset, form, validação, workflow/eventos de servidor (`fluig-workflow`), orquestração, widget/layout, Style Guide, review e correção (segurança, performance, acessibilidade), migração jQuery → ES6+, fluigcli, teste funcional de processos (`fluig-tester`), orquestrador de testes automatizados (`fluig-teste`: fluxo pela API do fluigcli + formulário headless, com suíte versionada em `testes/<processo>.json`) |
+| `skills/` | Dataset, form, validação, workflow/eventos de servidor (`fluig-workflow`), widget/layout, Style Guide, review e correção (segurança, performance, acessibilidade), migração jQuery → ES6+, fluigcli, teste funcional de processos (`fluig-tester`), orquestrador de testes automatizados (`fluig-teste`: fluxo pela API do fluigcli + formulário headless, com suíte versionada em `testes/<processo>.json`) |
 | `agents/` | `fluig-executor` e `fluig-revisor` (implementação e revisão de plano), `fluig-test-runner` e `fluig-test-auditor` (execução e auditoria de testes) |
 | `context/` | Arquitetura, convenções, tecnologias e Style Guide (origem: TOTVS fluig-agent-skills) |
 | `examples/` | Widget e layout mínimos oficiais |
@@ -28,21 +28,6 @@ Não usar as skills TOTVS de scaffold de form/dataset — o padrão daqui é
 /plugin marketplace add antoniosdn/fluig-plugin
 /plugin install fluig@fluig
 ```
-
-## Instalação (Cursor)
-
-O painel **Plugins** só lista o que veio de marketplace. Pasta
-`~/.cursor/plugins/local/` não aparece se “Allow Local Plugin Imports”
-estiver desligado (padrão em Teams/Enterprise).
-
-Instalar como o ADVPL:
-
-1. Cursor Dashboard → **Plugins** → **Add Marketplace** → **Import from Repo**
-2. Repo: `https://github.com/antoniosdn/fluig-plugin`
-3. Em Customize → Plugins, **Install** em `fluig`
-
-Sem dashboard de time: Customize → Plugins → adicionar a partir do GitHub
-com a mesma URL.
 
 ## No projeto do cliente
 

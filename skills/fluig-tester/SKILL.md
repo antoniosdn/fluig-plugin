@@ -330,7 +330,7 @@ senha, token ou dado pessoal sem máscara.
 
 - **`fluig-validacao`** — lista das regras de `beforeSendValidate` para montar
   os cenários negativos.
-- **`fluig-orquestracao`** — se o teste revelar defeito e o usuário pedir a
-  correção, a correção é outra tarefa, classificada por essa skill. Esta skill
-  só testa.
+- **`fluig-executor` / `fluig-revisor`** — se o teste revelar defeito e o
+  usuário pedir a correção, a correção é outra tarefa (plano → executor →
+  revisor). Esta skill só testa.
 - **Skill de GMUD do cliente**, se existir — usa o bloco "Evidência para GMUD".

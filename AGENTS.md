@@ -26,7 +26,6 @@ Responder e documentar em Português (BR). Preservar nomes técnicos do Fluig
 | Widget WCM nova | `fluig-scaffolding-widget` |
 | Layout WCM novo | `fluig-scaffolding-layout` |
 | Publicar / importar / diff / audit / deploy / log / helper | `fluig-cli` |
-| Vários arquivos ou risco Rhino | `fluig-orquestracao` |
 | Review de UI / segurança / a11y | `fluig-code-review` e irmãs |
 | Corrigir XSS / sanitizar entrada no frontend | `fluig-validate-security` |
 | Otimizar performance de widget/tela | `fluig-optimize-performance` |
@@ -44,7 +43,9 @@ Responder e documentar em Português (BR). Preservar nomes técnicos do Fluig
 | `fluig-test-runner` | Sonnet medium | Roda a suíte `testes/<processo>.json` aprovada (orquestrador `fluig-teste`) |
 | `fluig-test-auditor` | Opus high | Classifica as falhas (processo × teste × ambiente) e rascunha o plano de correção |
 
-Fluxo: planejar na sessão principal → `fluig-executor` → `fluig-revisor` → regressão com `fluig-teste`.
+Fluxo para mudança média ou grande (vários arquivos, risco Rhino, versão de processo): planejar na
+sessão principal (`plano-<descricao>.md`, aprovado pelo usuário) → `fluig-executor` → `fluig-revisor`
+→ no máximo uma rodada de correção → regressão com `fluig-teste`.
 
 Não usar scaffold oficial TOTVS de form ou dataset. Query Store, se o cliente
 tiver, está no `AGENTS.md` do projeto — não inventar endpoint.
