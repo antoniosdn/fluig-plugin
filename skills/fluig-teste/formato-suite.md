@@ -43,6 +43,8 @@ Uma suíte por processo, versionada no projeto do cliente, em `testes/<processo>
     "html": "Reembolso.html",
     "emailUsuario": "...",             // WCMAPI.userEmail simulado
     "datasets": { "ds_x": [ { "COL": "v" } ] },   // respostas de DatasetFactory (padrão: vazio)
+    "globais": { "currentUser": "joao" },         // opcional: variáveis que o displayFields injeta
+    //   (o simulador já define currentTask, modForm, formMode = modForm e currentUser = 'teste')
     "casos": [
       {
         "id": "gestor-obs-reprovar",

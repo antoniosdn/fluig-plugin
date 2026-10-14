@@ -88,11 +88,16 @@ STUB = '''<script>
 window.__errosJs = [];
 window.addEventListener('error', function (ev) { window.__errosJs.push((ev.message || 'erro') + ' @ ' + String(ev.filename || '').split('/').pop() + ':' + (ev.lineno || '')); });
 var currentTask = %(task)s, modForm = %(modo)s, cardId = '1', currentProc = '1';
+var formMode = modForm, currentUser = 'teste';  // nomes que o displayFields de alguns formulários injeta
+%(globais)s
 var __DS = %(datasets)s;
 var DatasetFactory = { getDataset: function (n) { return { values: __DS[n] || [] }; },
   createConstraint: function () { return {}; } };
 var ConstraintType = { MUST: 1, SHOULD: 2, MUST_NOT: 3 };
-window.WCMAPI = { userEmail: %(email)s, user: %(email)s, userCode: 'teste', isIe9: function () { return false; } };
+// funções globais que o Fluig fornece ao formulário (zoom): sem efeito fora dele
+window.reloadZoomFilterValues = function () { };
+window.WCMAPI = { userEmail: %(email)s, user: %(email)s, userCode: 'teste', isIe9: function () { return false; },
+  getLocale: function () { return 'pt_BR'; } };  // FLUIGC.calendar lê o idioma daqui
 // página pai do portal (o formulário roda num iframe no Fluig): parent.$, parent.document.body, parent.WCMAPI
 window.parent = { WCMAPI: window.WCMAPI, document: { body: document.documentElement },
   $: function () { return window.jQuery.apply(window, arguments); },
@@ -139,7 +144,9 @@ def montar_pagina(base, formulario, caso):
     pre += ''.join("$(%s).prop('checked',true);" % json.dumps(s) for s in caso.get('marcar', []))
     stub = STUB % {'task': json.dumps(str(caso['atividade'])), 'modo': json.dumps(caso.get('modo', 'MOD')),
                    'datasets': json.dumps(formulario.get('datasets', {}), ensure_ascii=False),
-                   'email': json.dumps(formulario.get('emailUsuario', 'teste@exemplo.com'))}
+                   'email': json.dumps(formulario.get('emailUsuario', 'teste@exemplo.com')),
+                   'globais': ''.join('window[%s] = %s;' % (json.dumps(k), json.dumps(v, ensure_ascii=False))
+                                      for k, v in formulario.get('globais', {}).items())}
     # stubs antes do primeiro script do formulário; valores antes do document.ready; coleta no load
     pagina = re.sub(r'(<script)', stub + r'\1', base, count=1)
     pagina = pagina.replace('</body>', '<script>' + pre + '</script>'
