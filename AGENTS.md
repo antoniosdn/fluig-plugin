@@ -33,6 +33,18 @@ Responder e documentar em Português (BR). Preservar nomes técnicos do Fluig
 | Corrigir acessibilidade de markup | `fluig-improve-accessibility` |
 | Migrar jQuery → ES6+ (só código de browser) | `fluig-migrate-jquery-es6` |
 | Teste funcional de processo pela interface | `fluig-tester` |
+| Testar / regressão automatizada de processo (API do fluigcli + formulário headless) | `fluig-teste` (orquestrador) |
+
+## Agentes deste plugin
+
+| Agente | Modelo | Papel |
+|---|---|---|
+| `fluig-executor` | Sonnet medium | Implementa um `plano-*.md` aprovado; publica com fluigcli (ou versão de processo via `deployProcess` com imagem) só quando o plano manda |
+| `fluig-revisor` | Opus high | Revisa o `git diff` contra o plano e o servidor (só leitura) |
+| `fluig-test-runner` | Sonnet medium | Roda a suíte `testes/<processo>.json` aprovada (orquestrador `fluig-teste`) |
+| `fluig-test-auditor` | Opus high | Classifica as falhas (processo × teste × ambiente) e rascunha o plano de correção |
+
+Fluxo: planejar na sessão principal → `fluig-executor` → `fluig-revisor` → regressão com `fluig-teste`.
 
 Não usar scaffold oficial TOTVS de form ou dataset. Query Store, se o cliente
 tiver, está no `AGENTS.md` do projeto — não inventar endpoint.

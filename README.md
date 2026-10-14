@@ -10,7 +10,8 @@ Substitui a cópia de `.agents/skills/` em cada cliente — o mesmo motivo do
 
 | Pasta | O que tem |
 |---|---|
-| `skills/` | Dataset, form, validação, workflow/eventos de servidor (`fluig-workflow`), orquestração, widget/layout, Style Guide, review e correção (segurança, performance, acessibilidade), migração jQuery → ES6+, fluigcli, teste funcional de processos (`fluig-tester`) |
+| `skills/` | Dataset, form, validação, workflow/eventos de servidor (`fluig-workflow`), orquestração, widget/layout, Style Guide, review e correção (segurança, performance, acessibilidade), migração jQuery → ES6+, fluigcli, teste funcional de processos (`fluig-tester`), orquestrador de testes automatizados (`fluig-teste`: fluxo pela API do fluigcli + formulário headless, com suíte versionada em `testes/<processo>.json`) |
+| `agents/` | `fluig-executor` e `fluig-revisor` (implementação e revisão de plano), `fluig-test-runner` e `fluig-test-auditor` (execução e auditoria de testes) |
 | `context/` | Arquitetura, convenções, tecnologias e Style Guide (origem: TOTVS fluig-agent-skills) |
 | `examples/` | Widget e layout mínimos oficiais |
 | `rules/` | ECMA 5 / Rhino em `datasets/` e `workflow/scripts/` |
