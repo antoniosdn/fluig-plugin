@@ -147,6 +147,8 @@ def executar_cenario(fl, suite, cen, simular):
         return r
 
     args = ['request', 'start', proc, '--fields-file', arquivo_campos(campos), '--comment', marca, '-y']
+    for anexo in cen.get('anexos', suite.get('anexos', [])):  # processo que exige anexo no início
+        args += ['--attach', anexo]
     rc, d, txt = fl.rodar(args)
     n = numero_de(d, txt)
     if rc != 0 or not n:

@@ -12,6 +12,7 @@ Uma suíte por processo, versionada no projeto do cliente, em `testes/<processo>
   //   env:  arquivo com FLUIG_HOST / FLUIGCLI_SERVER / credencial (relativo à raiz do projeto)
   "datasetFormulario": "Reembolso",   // datasetName do formulário (para conferir campos gravados)
   "camposBase": { "campo": "valor", "filho___1": "valor" },  // campos comuns a todos os cenários
+  "anexos": ["testes/anexos/documento-teste.pdf"],           // opcional: anexados no início (também por cenário)
 
   "cenarios": [                        // CAMADA 1 — fluxo pela API (cria solicitações!)
     {
