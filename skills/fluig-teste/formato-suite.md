@@ -25,6 +25,7 @@ Uma suíte por processo, versionada no projeto do cliente, em `testes/<processo>
           "destino": 65,               // --target-state (saída escolhida pelo usuário); omitir = fluxo do diagrama
           "campos": { "ObsGestorSol": "..." },
           "esperado": { "etapa": 26 }  // e/ou "status": "OPEN" | "FINALIZED" | "CANCELED"
+          // "aguardar": 90 → consulta a cada 3 s até etapa/status baterem (tarefa de serviço em segundo plano)
         }
       ],
       "verificar": {
@@ -79,4 +80,6 @@ Uma suíte por processo, versionada no projeto do cliente, em `testes/<processo>
   Validação de tela é a camada 2.
 - Na camada 2, campos que vêm de zoom/autocomplete não existem no headless: use `contem` /
   `naoContem` para a regra testada, em vez de `"espera": "ok"`, quando houver outros obrigatórios.
+- Tarefa de serviço roda em segundo plano (o `request move` volta antes dela terminar): no passo
+  que entra nela, use `"aguardar": <segundos>` no `esperado` (também vale em `inicio.esperado`).
 - Comentários e observações dos testes levam a marca `[TESTE <execucao>]` (o script põe sozinho).

@@ -113,6 +113,20 @@ def conferir(esperado, atual, onde, checks):
                            'observado': atual.get(chave) if atual else None, 'ok': ok})
 
 
+def aguardar(fl, numero, esperado, atual):
+    """Tarefa de serviço em segundo plano: consulta a solicitação a cada 3 s até bater com o
+    esperado (etapa/status) ou passar esperado["aguardar"] segundos."""
+    limite = time.time() + float(esperado.get('aguardar') or 0)
+    def bate(a):
+        return a is not None and all(a.get(k) == esperado[k] for k in ('etapa', 'status') if k in esperado)
+    while not bate(atual) and time.time() < limite:
+        time.sleep(3)
+        novo, erro = fl.estado(numero)
+        if novo is not None:
+            atual = novo
+    return atual
+
+
 def executar_cenario(fl, suite, cen, simular):
     proc = suite['processo']
     marca = '[TESTE %s] %s' % (suite.get('execucao', ''), cen['id'])
@@ -144,6 +158,7 @@ def executar_cenario(fl, suite, cen, simular):
     atual, erro = fl.estado(n)
     if erro:
         r['erros'].append(erro)
+    atual = aguardar(fl, n, cen.get('inicio', {}).get('esperado', {}), atual)
     conferir(cen.get('inicio', {}).get('esperado', {}), atual, 'início', r['checks'])
 
     for i, p in enumerate(cen.get('passos', []), 1):
@@ -167,6 +182,7 @@ def executar_cenario(fl, suite, cen, simular):
         atual, erro = fl.estado(n)
         if erro:
             r['erros'].append(erro)
+        atual = aguardar(fl, n, p.get('esperado', {}), atual)
         conferir(p.get('esperado', {}), atual, onde, r['checks'])
 
     v = cen.get('verificar', {})
