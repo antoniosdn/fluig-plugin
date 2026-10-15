@@ -30,6 +30,10 @@ MAPA = {
     '/style-guide/css/fluig-style-guide.min.css': 'fluig-style-guide.min.css',
     '/portal/resources/js/jquery/jquery.js': 'jquery.js',
     '/style-guide/js/fluig-style-guide.min.js': 'fluig-style-guide.min.js',
+    # o style guide depende do Mustache; sem ele o FLUIGC não é criado
+    '/portal/resources/js/mustache/mustache-min.js': 'mustache-min.js',
+    '/resources/js/mustache/mustache-min.js': 'mustache-min.js',
+    '/portal/resources/js/jquery/jquery-ui.min.js': 'jquery-ui.min.js',
 }
 NAVEGADORES = ['/Applications/Brave Browser.app/Contents/MacOS/Brave Browser',
                '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
