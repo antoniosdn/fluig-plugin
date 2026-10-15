@@ -142,6 +142,14 @@ $(window).on('load', function () { setTimeout(function () {
 </script>'''
 
 
+def globais_do_caso(formulario, caso):
+    """Globais do formulário + as do caso (o caso vence). O valor "$atividade" vira o número da
+    atividade do caso, para variáveis que o displayFields injeta (ex.: tarefaatual)."""
+    g = dict(formulario.get('globais', {}))
+    g.update(caso.get('globais', {}))
+    return {k: (str(caso['atividade']) if v == '$atividade' else v) for k, v in g.items()}
+
+
 def montar_pagina(base, formulario, caso):
     pre = ''.join("$(%s).val(%s).trigger('change');" % (json.dumps(s), json.dumps(v))
                   for s, v in caso.get('valores', {}).items())
@@ -150,7 +158,7 @@ def montar_pagina(base, formulario, caso):
                    'datasets': json.dumps(formulario.get('datasets', {}), ensure_ascii=False),
                    'email': json.dumps(formulario.get('emailUsuario', 'teste@exemplo.com')),
                    'globais': ''.join('window[%s] = %s;' % (json.dumps(k), json.dumps(v, ensure_ascii=False))
-                                      for k, v in formulario.get('globais', {}).items())}
+                                      for k, v in globais_do_caso(formulario, caso).items())}
     # stubs antes do primeiro script do formulário; valores antes do document.ready; coleta no load
     pagina = re.sub(r'(<script)', stub + r'\1', base, count=1)
     pagina = pagina.replace('</body>', '<script>' + pre + '</script>'

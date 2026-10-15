@@ -17,7 +17,10 @@ Saída: <saida>/fluxo.json e código de saída 0 (tudo passou), 1 (falhou algo),
 import json
 import os
 import re
+import base64
 import subprocess
+import urllib.request
+from xml.sax.saxutils import escape
 import sys
 import tempfile
 import time
@@ -127,6 +130,63 @@ def aguardar(fl, numero, esperado, atual):
     return atual
 
 
+SOAP_SAVE_AND_SEND = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.workflow.ecm.technology.totvs.com/">
+<soapenv:Body><ws:saveAndSendTask>
+<username>%(usuario)s</username><password>%(senha)s</password><companyId>%(empresa)s</companyId>
+<processInstanceId>%(numero)d</processInstanceId><choosedState>%(destino)d</choosedState>
+<colleagueIds/><comments>%(comentario)s</comments><userId>%(userid)s</userId><completeTask>true</completeTask>
+<attachments>%(anexos)s</attachments><cardData>%(campos)s</cardData><appointment/>
+<managerMode>false</managerMode><threadSequence>0</threadSequence>
+</ws:saveAndSendTask></soapenv:Body></soapenv:Envelope>"""
+
+
+def destino_unico(fl, numero, etapa):
+    """Única saída da etapa na versão da solicitação (LINK_PROCES); None se houver mais de uma."""
+    rc, d, txt = fl.rodar(['db', 'query',
+                           'SELECT l.NUM_SEQ_ESTADO_FINAL FROM LINK_PROCES l JOIN PROCES_WORKFLOW p '
+                           'ON p.COD_DEF_PROCES = l.COD_DEF_PROCES AND p.NUM_VERS = l.NUM_VERS '
+                           'WHERE p.NUM_PROCES = %d AND l.NUM_SEQ_ESTADO_INICIAL = %d' % (numero, int(etapa))])
+    linhas = ((d or {}).get('data') or {}).get('rows') or []
+    valores = [list(l.values())[0] if isinstance(l, dict) else l[0] for l in linhas]
+    return int(valores[0]) if len(valores) == 1 else None
+
+
+def mover_com_anexo(env, numero, destino, campos, anexos, comentario):
+    """Envia a tarefa corrente com anexos pelo SOAP saveAndSendTask (o `request move` não anexa).
+    Credenciais do .env da suíte (FLUIG_HOST, FLUIG_USER, FLUIGCLI_PASSWORD/FLUIG_PASS). Devolve (ok, msg)."""
+    host = (env.get('FLUIG_HOST') or '').rstrip('/')
+    usuario = env.get('FLUIG_USER') or ''
+    senha = env.get('FLUIGCLI_PASSWORD') or env.get('FLUIG_PASS') or ''
+    if not (host and usuario and senha):
+        return False, 'anexo por passo precisa de FLUIG_HOST, FLUIG_USER e FLUIGCLI_PASSWORD no .env da suíte'
+    itens = []
+    for i, caminho in enumerate(anexos, 1):
+        nome = escape(os.path.basename(caminho))
+        with open(caminho, 'rb') as f:
+            conteudo = base64.b64encode(f.read()).decode('ascii')
+        itens.append('<item><attachmentSequence>%d</attachmentSequence><attachments><attach>true</attach>'
+                     '<fileName>%s</fileName><filecontent>%s</filecontent><principal>true</principal>'
+                     '</attachments><deleted>false</deleted><description>%s</description><fileName>%s</fileName>'
+                     '<newAttach>true</newAttach></item>' % (i, nome, conteudo, nome, nome))
+    cartao = ''.join('<item><item>%s</item><item>%s</item></item>' % (escape(str(k)), escape(str(v)))
+                     for k, v in (campos or {}).items())
+    corpo = SOAP_SAVE_AND_SEND % {'usuario': escape(usuario), 'senha': escape(senha),
+                                  'empresa': escape(env.get('FLUIG_COMPANY') or '1'), 'numero': numero,
+                                  'destino': destino, 'comentario': escape(comentario),
+                                  'userid': escape(env.get('FLUIG_USER_ID') or usuario),
+                                  'anexos': ''.join(itens), 'campos': cartao}
+    req = urllib.request.Request(host + '/webdesk/ECMWorkflowEngineService', data=corpo.encode('utf-8'),
+                                 headers={'Content-Type': 'text/xml; charset=utf-8', 'SOAPAction': ''})
+    try:
+        resp = urllib.request.urlopen(req, timeout=120).read().decode('utf-8', 'replace')
+    except Exception as e:  # noqa: BLE001 — a mensagem vai para o relatório (sem a senha)
+        return False, 'saveAndSendTask falhou: %s' % str(e)[:300]
+    erro = re.search(r'<item>ERROR</item>\s*<item>(.*?)</item>', resp, re.S) or re.search(r'<faultstring>(.*?)</faultstring>', resp, re.S)
+    if erro:
+        return False, 'saveAndSendTask: %s' % erro.group(1)[:300]
+    return True, ''
+
+
 def executar_cenario(fl, suite, cen, simular):
     proc = suite['processo']
     marca = '[TESTE %s] %s' % (suite.get('execucao', ''), cen['id'])
@@ -139,8 +199,9 @@ def executar_cenario(fl, suite, cen, simular):
         print('  iniciar %s com %d campo(s)%s' % (proc, len(campos),
               ' → esperado ' + json.dumps(cen.get('inicio', {}).get('esperado', {})) if cen.get('inicio') else ''))
         for p in cen.get('passos', []):
-            print('  na etapa %s: assumir e mover%s%s → esperado %s' % (
+            print('  na etapa %s: assumir e mover%s%s%s → esperado %s' % (
                 p.get('etapa'), ' para ' + str(p['destino']) if p.get('destino') else '',
+                ' anexando ' + ', '.join(os.path.basename(a) for a in p['anexos']) if p.get('anexos') else '',
                 ' com ' + ', '.join(p.get('campos', {}).keys()) if p.get('campos') else '',
                 json.dumps(p.get('esperado', {}), ensure_ascii=False)))
         r['resultado'] = 'simulado'
@@ -171,15 +232,26 @@ def executar_cenario(fl, suite, cen, simular):
             r['erros'].append('%s: solicitação não está na etapa esperada; passos seguintes não executados' % onde)
             break
         fl.rodar(['task', 'assume', str(n), '-y'])  # pool: assume; tarefa já sua: o erro é inofensivo
-        args = ['request', 'move', str(n), '--comment', '%s · passo %d' % (marca, i), '-y']
-        if p.get('destino'):
-            args += ['--target-state', str(p['destino'])]
-        if p.get('campos'):
-            args += ['--fields-file', arquivo_campos(p['campos'])]
-        rc, d, txt = fl.rodar(args)
-        if rc != 0:
-            r['erros'].append('%s: movimento falhou: %s' % (onde, txt[-400:]))
-            break
+        if p.get('anexos'):  # atividade que exige anexo nela mesma: SOAP saveAndSendTask
+            destino = p.get('destino') or destino_unico(fl, n, atual['etapa'])
+            if not destino:
+                r['erros'].append('%s: etapa com mais de uma saída; informe "destino" no passo com anexos' % onde)
+                break
+            ok, msg = mover_com_anexo(fl.env, n, int(destino), p.get('campos'), p['anexos'],
+                                      '%s · passo %d' % (marca, i))
+            if not ok:
+                r['erros'].append('%s: movimento com anexo falhou: %s' % (onde, msg))
+                break
+        else:
+            args = ['request', 'move', str(n), '--comment', '%s · passo %d' % (marca, i), '-y']
+            if p.get('destino'):
+                args += ['--target-state', str(p['destino'])]
+            if p.get('campos'):
+                args += ['--fields-file', arquivo_campos(p['campos'])]
+            rc, d, txt = fl.rodar(args)
+            if rc != 0:
+                r['erros'].append('%s: movimento falhou: %s' % (onde, txt[-400:]))
+                break
         time.sleep(1)
         atual, erro = fl.estado(n)
         if erro:

@@ -36,6 +36,9 @@ Uma suíte por processo, versionada no projeto do cliente, em `testes/<processo>
           "destino": 65,               // --target-state (saída escolhida pelo usuário); omitir = fluxo do diagrama
           "campos": { "ObsGestorSol": "..." },
           "esperado": { "etapa": 26 }  // e/ou "status": "OPEN" | "FINALIZED" | "CANCELED"
+          // "anexos": ["testes/anexos/x.pdf"] → atividade que exige anexo nela mesma: o passo vai pelo
+          //   SOAP saveAndSendTask (anexa e envia; destino = "destino" ou a única saída da etapa).
+          //   Precisa de FLUIG_HOST, FLUIG_USER e FLUIGCLI_PASSWORD no .env da suíte.
           // "aguardar": 90 → consulta a cada 3 s até etapa/status baterem (tarefa de serviço em segundo plano)
         }
       ],
@@ -53,7 +56,8 @@ Uma suíte por processo, versionada no projeto do cliente, em `testes/<processo>
     "html": "Reembolso.html",
     "emailUsuario": "...",             // WCMAPI.userEmail simulado
     "datasets": { "ds_x": [ { "COL": "v" } ] },   // respostas de DatasetFactory (padrão: vazio)
-    "globais": { "currentUser": "joao" },         // opcional: variáveis que o displayFields injeta
+    "globais": { "currentUser": "joao", "tarefaatual": "$atividade" },  // opcional: variáveis que o displayFields injeta
+    //   "$atividade" vira o número da atividade de cada caso; um caso pode ter "globais" próprias (sobrepõem)
     //   (o simulador já define currentTask, modForm, formMode = modForm e currentUser = 'teste')
     "casos": [
       {
