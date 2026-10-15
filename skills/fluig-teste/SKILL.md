@@ -1,6 +1,6 @@
 ---
 name: fluig-teste
-description: Orquestrador de testes de processos TOTVS Fluig em 3 camadas — fluxo pela API do fluigcli (cria e movimenta solicitações reais), formulário em navegador headless e, opcionalmente, interface real pelo proxy autenticado (fluigcli dev). Levanta o processo, monta a suíte testes/<processo>.json, pede aprovação, roda com o subagente fluig-test-runner, audita com o fluig-test-auditor e propõe correção dos defeitos. Use quando o usuário pedir para testar, homologar, rodar a regressão ou "ver se o processo roda certinho", ou digitar /fluig-teste.
+description: Orquestrador de testes de processos TOTVS Fluig em 3 camadas — fluxo pela API do fluigcli (cria e movimenta solicitações reais), formulário em navegador headless e o caminho feliz pela interface real (primeiro teste, pelo proxy autenticado fluigcli dev + proxy_tela). Levanta o processo, monta a suíte testes/<processo>.json, pede aprovação, roda com o subagente fluig-test-runner, audita com o fluig-test-auditor e propõe correção dos defeitos. Use quando o usuário pedir para testar, homologar, rodar a regressão ou "ver se o processo roda certinho", ou digitar /fluig-teste.
 ---
 
 # /fluig-teste — orquestrador de testes Fluig
@@ -48,15 +48,18 @@ Peças: `scripts/executar_fluxo.py` (camada 1), `scripts/testar_formulario.py` (
 - Mostrar ao usuário a matriz (cenário → caminho esperado → final) e seguir para a execução
   (regra "autorização": em servidor não produtivo não se pede aprovação).
 
-### 2. Executar (subagente `fluig-test-runner`)
-Passar: caminho da suíte, camadas aprovadas (1, 2, 3), cenários aprovados, pasta de saída
-(`testes/resultados/`). O runner devolve um relatório curto e os arquivos de resultado.
+### 2. Executar
 
-Camada 3 (interface real) só quando o usuário pedir aceite com prints: o runner sobe o proxy
-(`.claude/launch.json` → `fluigcli dev`) e abre o formulário de cada solicitação por
-`/webdesk/streamcontrol/...` pelo navegador do app. Limite conhecido: a tela "Movimentar
-Solicitação" do portal fica em branco pelo proxy (o iframe usa o host do servidor fixo); por isso
-a movimentação é sempre pela camada 1.
+**Primeiro: camada 3, caminho feliz pela tela** — uma vez por processo novo ou ajustado (decisão
+do usuário, 15/10/2026). Roda na **sessão principal** (os subagentes não têm o navegador do app):
+abre a solicitação, preenche e envia cada etapa pelo portal até o fim, pelo proxy
+`scripts/proxy_tela.mjs` na frente do `fluigcli dev`. Roteiro completo, URLs, anexo e o que
+conferir: `camada3-tela.md`. Defeito achado aqui vale como defeito do processo; limitação da
+ferramenta (máscara, select nativo) não.
+
+**Depois: camadas 1 e 2 (subagente `fluig-test-runner`).** Passar: caminho da suíte, camadas (1, 2),
+cenários aprovados, pasta de saída (`testes/resultados/`). O runner devolve um relatório curto e
+os arquivos de resultado. A camada 1 cobre os desvios e os outros fins; a 2, as regras de tela.
 
 ### 3. Auditar (subagente `fluig-test-auditor`)
 Passar: suíte, arquivos de resultado, lista de solicitações criadas. Ele confere no servidor (só
@@ -68,7 +71,8 @@ Na resposta, curto:
 - placar por camada e tabela cenário → solicitação → resultado;
 - defeitos do processo (com o rascunho de correção) e defeitos do teste (o que ajustar na suíte);
 - solicitações que ficaram abertas;
-- bloco "Evidência para GMUD" (ambiente, data, cenários com resultado, caminho dos resultados).
+- bloco "Evidência para GMUD" (ambiente, data, cenários com resultado, caminho dos resultados) só
+  quando o usuário pedir; por padrão não se gera evidência nem print no projeto.
 
 Defeito do teste: corrigir a suíte você mesmo e oferecer rodar de novo.
 Defeito do processo: o usuário aprova o plano → `fluig-executor` + `fluig-revisor` (ver CLAUDE.md

@@ -14,6 +14,16 @@ Uma suíte por processo, versionada no projeto do cliente, em `testes/<processo>
   "camposBase": { "campo": "valor", "filho___1": "valor" },  // campos comuns a todos os cenários
   "anexos": ["testes/anexos/documento-teste.pdf"],           // opcional: anexados no início (também por cenário)
 
+  "tela": {                           // CAMADA 3 — caminho feliz pela tela (roteiro: camada3-tela.md)
+    "descricao": "prestador já cadastrado, aprovado, até a conclusão",
+    "passos": [                        // o que preencher/conferir em cada etapa, para a sessão principal seguir
+      { "etapa": 0, "preencher": "primeirasol=Não; Empresa=ASCENDRA (zoom); ...", "conferir": "cabeçalho preenchido; data do pagamento 10/25" },
+      { "etapa": 4, "enviarVazio": "cobra só Deliberação", "preencher": "Aprovado", "conferir": "Cadastro do prestador riscada" },
+      { "etapa": 21, "anexo": true }
+    ],
+    "fim": 18
+  },
+
   "cenarios": [                        // CAMADA 1 — fluxo pela API (cria solicitações!)
     {
       "id": "caminho-feliz",

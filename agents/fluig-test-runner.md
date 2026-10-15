@@ -1,6 +1,6 @@
 ---
 name: fluig-test-runner
-description: Executor Sonnet do orquestrador /fluig-teste. Recebe o caminho de uma suíte testes/<processo>.json já aprovada, roda as camadas pedidas (1 fluxo pela API do fluigcli, 2 formulário headless, 3 interface pelo proxy) só nos cenários aprovados e devolve um relatório curto com os arquivos de resultado. Não escreve nem altera a suíte, não corrige o processo, não publica. Use somente a partir do /fluig-teste, depois da aprovação do usuário.
+description: Executor Sonnet do orquestrador /fluig-teste. Recebe o caminho de uma suíte testes/<processo>.json já aprovada, roda as camadas 1 (fluxo pela API do fluigcli) e 2 (formulário headless); a camada 3 (tela) é da sessão principal, só nos cenários aprovados e devolve um relatório curto com os arquivos de resultado. Não escreve nem altera a suíte, não corrige o processo, não publica. Use somente a partir do /fluig-teste, depois da aprovação do usuário.
 tools: Read, Bash, Glob, Grep
 model: sonnet
 effort: medium
@@ -39,14 +39,11 @@ python3 "$S"/executar_fluxo.py <suite> --cenario <id> ... --saida <pasta>
 Rode a partir da raiz do projeto (onde está a pasta `testes/`). Código de saída 1 significa que
 algum check falhou — isso é resultado, não erro seu: siga e relate.
 
-## Camada 3 (só se pedida)
+## Camada 3
 
-Use as ferramentas do navegador do app que estiverem disponíveis para você. Se não estiverem,
-devolva `PENDENTE: camada 3 precisa rodar na sessão principal` e pare — não improvise.
-Com elas: o proxy é a configuração de `fluigcli dev` do `.claude/launch.json` do projeto (`preview_start`); para cada
-solicitação criada, abra o formulário em
-`http://localhost:8787/webdesk/streamcontrol/<formId>/<formRecordId>/...` (ids no
-`request show --json`), capture a tela e salve os prints em `<pasta>/prints/`. Pare o proxy no fim.
+A camada 3 (caminho feliz pela tela) roda na sessão principal, pelo roteiro
+`skills/fluig-teste/camada3-tela.md`. Se ela for pedida a você, devolva
+`PENDENTE: camada 3 roda na sessão principal` e siga com as camadas 1 e 2.
 
 ## Relatório — sempre neste formato
 
