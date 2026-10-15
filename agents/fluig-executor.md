@@ -72,6 +72,18 @@ Carregue a skill `fluig-cli`. Credenciais do servidor vêm do projeto:
 ### Versão nova de processo (diagrama) — só se o plano mandar explicitamente
 
 1. **Altere o `.process`** em `workflow/diagrams/<processId>.process` exatamente como o plano diz.
+   - **Conexões novas vão no fim do bloco de `<connections>`.** Cada conexão é referenciada por
+     `/0/@connections.N`, o índice na ordem do arquivo (não o id do flow), e a `anchors.0` de cada
+     atividade lista essas referências em `outgoingConnections`/`incomingConnections`. Inserir no meio
+     desloca o índice de todas as seguintes. Atividade nova: acrescente o `<children>` no fim também.
+   - **Tarefa de serviço em segundo plano** (`executionType="1"`) só é liberada pelo Fluig com evento
+     intermediário de erro anexo (`attachedEvents` → `BpmnIntermediateEvent` tipo 43 → tarefa de
+     tratamento). Se o plano pede `executionType="1"` sem esse evento, devolva `PENDENTE`.
+   - **Verifique e corrija as referências** antes de salvar no VS Code (localize o script uma vez:
+     `W=$(ls -d ~/.claude/plugins/cache/*/fluig/*/skills/fluig-workflow/scripts 2>/dev/null | sort -V | tail -1)`):
+     `python3 "$W"/verificar_process.py workflow/diagrams/<processId>.process --corrigir`
+     Deve terminar com 0 problema(s). `EXE-001` restante → `PENDENTE`. Se o script não conseguir
+     corrigir (ERRO), pare e devolva `PENDENTE`; não ajuste as âncoras à mão.
 2. **Regeneração:** a extensão fluiggers do VS Code observa `workflow/diagrams/*.process` e regenera
    `workflow/.resources/<processId>.ecm30.xml` e `<processId>.processimage.svg` (com os scripts atuais de
    `workflow/scripts`). Confira que os dois ficaram com data posterior à sua edição. Se não regeneraram

@@ -250,5 +250,20 @@ O JS da tela consome a variável que **este** form injeta; não inventar outra.
 - [ ] Pai-filho: `___N` em form/tela; chave sem `___` em `addCardChild`
 - [ ] Service task relança erro quando existe trilha de erro
 - [ ] Nenhuma integração alterada sem pedido explícito
+- [ ] `.process` alterado: `python3 <dir desta skill>/scripts/verificar_process.py <arquivo>` com 0 problema(s)
+
+## Editar o `.process` (diagrama Graphiti)
+
+- Cada `<connections>` é referenciada por `/0/@connections.N`: N é a **posição na ordem do arquivo**
+  (a partir de 0), não o id do flow. A `anchors.0` de cada atividade lista as conexões em
+  `outgoingConnections` e `incomingConnections`. Inserir, remover ou reordenar uma conexão desloca o
+  índice de todas as seguintes; por isso, conexões e atividades novas vão **no fim** dos seus blocos.
+- Os `<children>` de primeiro nível podem aparecer depois das conexões e dos `<styles>`: conte todos.
+- Referência errada aparece no validador do VS Code como POS-003 (origem) ou POS-004 (destino).
+  `scripts/verificar_process.py <arquivo> --corrigir` recalcula as referências sem mexer no resto.
+- Tarefa de serviço em segundo plano (`executionType="1"`) precisa de evento intermediário de erro
+  anexo (`attachedEvents` → `BpmnIntermediateEvent` tipo 43 → tarefa de tratamento que volta para a
+  integração); sem ele o `releaseProcess` recusa a versão (o script acusa como EXE-001). Na
+  movimentação (`executionType="2"`) não é exigido.
 - [ ] ECMA 5 (sem `let`/`const`/arrow/template literal)
 - [ ] Publicação via `fluig-cli`, só com autorização

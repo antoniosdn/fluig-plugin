@@ -52,6 +52,12 @@ inteiro). Não leia o histórico da execução — só plano, diff e o que preci
    `ESTADO_PROCES_COND` contra a versão anterior), que os eventos batem com `workflow/scripts`
    (`fluigcli workflow diff --all-events`) e que a **imagem do diagrama** foi gravada
    (`CLB_IMG_PROCES` não nulo em `VERS_DEF_PROCES`) — publicação sem imagem é item `[execucao]`.
+8. **Diagrama (`.process` alterado):** rode, sem `--corrigir`,
+   `python3 "$W"/verificar_process.py workflow/diagrams/<processId>.process`
+   (localize o script com `W=$(ls -d ~/.claude/plugins/cache/*/fluig/*/skills/fluig-workflow/scripts 2>/dev/null | sort -V | tail -1)`). Qualquer `POS-003`/`POS-004`/`POS-005` (referência de conexão errada
+   na âncora; o VS Code acusa e o diagrama fica inconsistente) é item `[execucao]`. `EXE-001`
+   (serviço em segundo plano sem evento de erro anexo) é `[plano]` se o plano não previu o evento,
+   `[execucao]` se previu.
 
 Aponte só defeito: o que quebra em execução, viola o plano ou viola as regras acima.
 Preferência de estilo não é item.
@@ -75,7 +81,7 @@ linhas tocadas pela correção (regressão). Não reabra o que já estava aprova
 
 ```
 VEREDITO: APROVADO | REPROVADO
-CHECKLIST: escopo OK|X · fluxo OK|X · campos OK|X · validacao OK|X · rhino OK|X · linhas OK|X · publicacao OK|X|NA
+CHECKLIST: escopo OK|X · fluxo OK|X · campos OK|X · validacao OK|X · rhino OK|X · linhas OK|X · publicacao OK|X|NA · diagrama OK|X|NA
 ITENS:
 1. [execucao|plano] <arquivo>:<linha> — <defeito> — <correção esperada>
 CONFERIDO NO SERVIDOR: <o que foi consultado e o resultado, em uma linha cada>
