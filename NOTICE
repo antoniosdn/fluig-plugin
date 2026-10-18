@@ -1,5 +1,9 @@
-Este plugin inclui trechos do pacote oficial totvs/fluig-agent-skills
-(https://github.com/totvs/fluig-agent-skills), licença MIT.
+fluig-plugin
+Copyright (c) 2026 Antonio — licença MIT (ver LICENSE).
+
+== Material de terceiros incluído ==
+
+totvs/fluig-agent-skills (https://github.com/totvs/fluig-agent-skills), licença MIT.
 
 Arquivos derivados:
 - context/*
@@ -20,6 +24,30 @@ Arquivos derivados:
 
 A TOTVS não se responsabiliza por código gerado por ferramentas de IA.
 
+== Ferramentas usadas, não distribuídas ==
+
+alorenco/fluig-cli (https://github.com/alorenco/fluig-cli): CLI não oficial.
+A skill skills/fluig-cli tem texto próprio e opera essa CLI; skills/fluig-teste e os
+agentes fluig-executor e fluig-revisor também a usam.
+
+antoniosdn/fluig-mcp (https://github.com/antoniosdn/fluig-mcp), licença MIT: fork de
+alucardigo/fluig-mcp (https://github.com/alucardigo/fluig-mcp), de Rodrigo de Souza Faria,
+com o gerador de fluxo (fluig_flow_*) acrescentado. Usado por skills/fluig-fluxo e pelos
+agentes fluig-executor e fluig-revisor.
+
+fluiggers/fluig-vscode-extension (https://github.com/fluiggers/fluig-vscode-extension),
+licença MIT, (c) 2020 Bruno Gasparetto: o recorte usado para gerar o .process fica no
+fluig-mcp, não neste plugin.
+
+Fluig Studio (TOTVS) e Eclipse (EPL): o conversor ECM30 é instalado pelo fluig-mcp na
+máquina do usuário. Nenhum JAR é distribuído com este plugin.
+
+Os scripts de skills/fluig-teste baixam do servidor Fluig do próprio usuário os arquivos
+do portal (jQuery, jQuery UI, Mustache, Fluig Style Guide) para um cache local. Esses
+arquivos não são distribuídos com este plugin.
+
+== Inspiração, sem cópia ==
+
 A skill skills/fluig-tester tem texto próprio, inspirado na metodologia de
 matheusnevoa/fluig-tester (https://github.com/matheusnevoa/fluig-tester).
 Nenhum trecho daquele repositório foi copiado.
@@ -28,6 +56,5 @@ A skill skills/fluig-workflow tem texto próprio, inspirado no protocolo de
 Wisleey/Skill-FLUIG-TOTVS-Cursor (https://github.com/Wisleey/Skill-FLUIG-TOTVS-Cursor).
 Nenhum trecho daquele repositório foi copiado.
 
-A skill skills/fluig-cli tem texto próprio e opera a CLI não oficial
-alorenco/fluig-cli (https://github.com/alorenco/fluig-cli), que não é
-distribuída com este plugin.
+TOTVS e Fluig são marcas da TOTVS S.A. Este projeto é independente e não é afiliado,
+patrocinado nem endossado pela TOTVS.
