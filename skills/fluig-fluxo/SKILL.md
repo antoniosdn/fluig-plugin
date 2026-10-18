@@ -45,15 +45,19 @@ Não usar:
 
 1. Servidor MCP **mcp-fluig** com `fluig_flow_validate`, `fluig_flow_generate`, `fluig_flow_regenerate`,
    `fluig_flow_read` e `fluig_flow_deploy`. O prefixo (`mcp__<nome>__`) depende de como o projeto registrou
-   o servidor; procurar pelo sufixo. Sem elas, parar e dizer que precisa da versão do mcp-fluig com o
-   gerador de fluxo (`node <mcp-fluig>/server.js --list | grep fluig_flow`).
+   o servidor; procurar pelo sufixo. Sem elas, parar e carregar a skill **`fluig-preparar`**, que confere
+   e (com autorização) instala: o mcp-fluig precisa ser o fork
+   [antoniosdn/fluig-mcp](https://github.com/antoniosdn/fluig-mcp) (o original `alucardigo/fluig-mcp` não
+   tem o gerador de fluxo), com `npm install`, `FLUIG_MCP_DIR` e o registro como servidor MCP do projeto
+   (`node <mcp-fluig>/server.js --list | grep fluig_flow` lista as 5).
 2. **Toda chamada leva `env: "teste"`.** O servidor exige `env` sem default e `fluig_flow_deploy` recusa
    `"prod"`. Esta skill não lê nem escreve produção. Na dúvida sobre qual é o servidor de teste do
    projeto, `fluig_version` (env teste) mostra o host.
 3. `fluig_flow_deploy` some quando o servidor MCP roda com `FLUIG_READONLY=1` ("Ferramenta desconhecida
    ... FLUIG_READONLY"). Validar e gerar continuam funcionando.
 4. **ECM30 oficial:** Java 8+ e o conversor do Studio no cache local (`~/.fluig-mcp` ou `FLUIG_MCP_CACHE`),
-   uma vez por máquina: `fluig-mcp instalar-conversor --de <pasta plugins do Studio | studio.zip>`
+   uma vez por máquina (a skill `fluig-preparar` confere presença e integridade e conduz a instalação):
+   `fluig-mcp instalar-conversor --de <pasta plugins do Studio | studio.zip>`
    (aceita 1.8.2.0 e 2.0.0.2) ou `fluig-mcp instalar-conversor --baixar 1.8.2.0` (só existe download do
    1.8.2.0; o 2.0.0.2 só por `--de`). O `--baixar` baixa JARs da internet: **pedir autorização ao usuário
    antes** (nome, origem, tamanho ~43 MB; o comando mostra o total antes de baixar). Sem conversor, `conversor: "auto"` cai no **plano B** (gerador

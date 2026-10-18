@@ -19,6 +19,7 @@ Responder e documentar em Português (BR). Preservar nomes técnicos do Fluig
 
 | Pedido | Skill |
 |---|---|
+| Preparar / conferir máquina e projeto (fluigcli, mcp-fluig do fork antoniosdn, `FLUIG_MCP_DIR`, registro MCP, conversor do Studio, runtimes) | `fluig-preparar` |
 | Dataset novo ou refatorar | `dataset-fluig` / `fluig-dataset` |
 | Form, zoom, pai-filho, anexo | `form-fluig` |
 | Evento de workflow, `displayFields`/`enableFields`/`validateForm`, service task, gateway, `.process` | `fluig-workflow` |

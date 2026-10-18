@@ -90,7 +90,7 @@ Carregue a skill `fluig-cli`. Credenciais do servidor vêm do projeto:
    (VS Code fechado), pare e devolva `PENDENTE: abrir o VS Code no projeto para regenerar o ecm30`.
 3. **Valide o ecm30** antes de publicar: cada `<WorkflowProcessEvent>` igual ao script local; atividades,
    caminhos e condições iguais ao publicado, salvo o que o plano muda. Diferença inesperada → `PENDENTE`.
-4. **Publique com a imagem** pelo cliente do mcp-fluig (`$FLUIG_MCP_DIR/src/client.js`; sem a variável, pergunte ao orquestrador onde está):
+4. **Publique com a imagem** pelo cliente do mcp-fluig (`$FLUIG_MCP_DIR/src/client.js`; sem a variável, pare e devolva `PENDENTE: FLUIG_MCP_DIR não definida — rodar a skill fluig-preparar` (mcp-fluig do fork https://github.com/antoniosdn/fluig-mcp); não procure nem clone por conta própria):
    `deployProcess(ecm30Xml, { processId, svgXml, confirm: true })` — mesma sequência SOAP da "Exportar
    Processo" da extensão (cria versão, importa ecm30 + svg, libera). Variáveis do cliente: `FLUIG_HOST`,
    `FLUIG_USER`, `FLUIG_PASS`, `FLUIG_COMPANY` e `FLUIG_READONLY=0`, vindas do `.env` do projeto
@@ -107,6 +107,7 @@ Nunca faça `git commit` nem `git push`: isso é do orquestrador, a pedido do us
 ### Fluxo gerado de spec (skill `fluig-fluxo`) — só se o plano mandar
 
 O plano traz a spec v1 (ou o caminho de um `.json`) e a `versaoAlvo`. Carregue a skill `fluig-fluxo`.
+Sem `FLUIG_MCP_DIR` (ou sem `$FLUIG_MCP_DIR/server.js`), pare com `PENDENTE: FLUIG_MCP_DIR não definida — rodar a skill fluig-preparar`.
 Gere com `node "$FLUIG_MCP_DIR/server.js" gerar <spec.json> --projeto <raiz absoluta do projeto> <versaoAlvo> --oficial`
 (`--sobrescrever` só se o plano disser). Saída com erro, ou spec que precise de mudança → `PENDENTE` (não
 edite a spec por conta própria). No relatório: arquivos gerados, scripts vazios criados e os avisos.

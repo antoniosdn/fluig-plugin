@@ -60,7 +60,9 @@ inteiro). Não leia o histórico da execução — só plano, diff e o que preci
    `[execucao]` se previu.
 9. **Fluxo gerado de spec (`fluig-fluxo`):** a spec do plano passa no validador local
    (`node --input-type=module -e "import { readFileSync } from 'node:fs'; import { validarSpec } from '$FLUIG_MCP_DIR/src/flow/validar.js'; const r = await validarSpec(JSON.parse(readFileSync('<spec>','utf8')), { versaoAlvo: '<v>' }); console.log(JSON.stringify(r));"`
-   — ou equivalente em arquivo `.mjs` no temporário), o `.process` gerado passa no `verificar_process.py`, e todo
+   — ou equivalente em arquivo `.mjs` no temporário; sem `FLUIG_MCP_DIR` ou sem `$FLUIG_MCP_DIR/src/flow/validar.js`, não
+   procure nem clone a pasta: anote em `CONFERIDO NO SERVIDOR` a linha `validador local: não conferido — FLUIG_MCP_DIR
+   não definida; rodar a skill fluig-preparar (mcp-fluig do fork https://github.com/antoniosdn/fluig-mcp)` e confira o resto), o `.process` gerado passa no `verificar_process.py`, e todo
    `servicetaskN`/número de atividade usado nos scripts bate com os elementos do `.process`. Spec divergente do
    plano é `[execucao]`; decisão de negócio ausente no plano (papel, campo, tratamento) é `[plano]`.
 

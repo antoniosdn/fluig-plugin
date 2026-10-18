@@ -51,6 +51,17 @@ A versão instalada está em `.claude-plugin/plugin.json`; o histórico, no `git
 
 Nem tudo é necessário para tudo. Instale conforme o que for usar.
 
+A skill **`fluig-preparar`** confere a máquina e o projeto e diz, item a item, o que está ok e o
+que falta, com o comando de instalação. Peça no projeto do cliente ("prepara o ambiente do
+plugin fluig", ou `/fluig:fluig-preparar`). Ela só lê; clonar e instalar o mcp-fluig, registrar o
+servidor MCP, definir `FLUIG_MCP_DIR` e instalar o conversor do Studio ela faz só com sua
+autorização, item a item. Senha nunca passa pela conversa. O script de conferência também roda
+sozinho, a partir do plugin instalado:
+
+```bash
+python3 "$(ls -d ~/.claude/plugins/cache/*/fluig/*/skills/fluig-preparar/scripts | sort -V | tail -1)/conferir_ambiente.py" --projeto "$PWD"
+```
+
 | Ferramenta | Para quê | Usada por |
 |---|---|---|
 | [fluigcli](https://github.com/alorenco/fluig-cli) ≥ 0.9.6, com o servidor cadastrado (`fluigcli server add`) | publicar, exportar, `diff`, `audit`, log, movimentar solicitações | `fluig-cli`, `fluig-executor`, `fluig-revisor`, `fluig-teste` |
@@ -62,7 +73,8 @@ Nem tudo é necessário para tudo. Instale conforme o que for usar.
 | Java 8+ e o conversor do Fluig Studio no cache do mcp-fluig (`fluig-mcp instalar-conversor`) | ECM30 oficial do processo | `fluig-fluxo` |
 | Extensão [Fluiggers](https://github.com/fluiggers/fluig-vscode-extension) no VS Code | conferir e ajustar o `.process` gerado | `fluig-fluxo` (recomendado) |
 
-Detalhes de cada um estão na própria skill (seção de pré-requisitos) e no README do mcp-fluig.
+Detalhes de cada um estão em `fluig-preparar`, na própria skill (seção de pré-requisitos) e no
+README do mcp-fluig.
 
 ## Como usar
 
@@ -74,6 +86,7 @@ pai-filho no formulário", "publica o form"). Também dá para chamar pelo nome:
 
 | Pedido | Skill |
 |---|---|
+| Preparar ou conferir a máquina e o projeto (fluigcli, mcp-fluig, conversor do Studio, runtimes) | `fluig-preparar` |
 | Dataset novo ou refatorar | `dataset-fluig` (padrão do plugin) e `fluig-dataset` (regras Rhino/JSDoc) |
 | Formulário, zoom, pai-filho, anexo | `form-fluig` |
 | Validação de envio (`beforeSendValidate`, obrigatórios) | `fluig-validacao` |
@@ -212,7 +225,7 @@ de papéis e campos.
 
 | Pasta | Conteúdo |
 |---|---|
-| `skills/` | 21 skills (tabela acima) e seus scripts: `fluig-teste/scripts/` (`executar_fluxo.py`, `testar_formulario.py`, `proxy_tela.mjs`) e `fluig-workflow/scripts/verificar_process.py` |
+| `skills/` | 22 skills (tabela acima) e seus scripts: `fluig-teste/scripts/` (`executar_fluxo.py`, `testar_formulario.py`, `proxy_tela.mjs`), `fluig-workflow/scripts/verificar_process.py` e `fluig-preparar/scripts/conferir_ambiente.py` |
 | `agents/` | `fluig-executor` (Sonnet), `fluig-revisor` (Opus), `fluig-test-runner` (Sonnet), `fluig-test-auditor` (Opus) |
 | `context/` | Arquitetura, convenções, tecnologias e Style Guide do Fluig, lidos pelas skills de frontend |
 | `examples/` | Widget e layout WCM mínimos |
