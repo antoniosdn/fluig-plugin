@@ -58,6 +58,11 @@ inteiro). Não leia o histórico da execução — só plano, diff e o que preci
    na âncora; o VS Code acusa e o diagrama fica inconsistente) é item `[execucao]`. `EXE-001`
    (serviço em segundo plano sem evento de erro anexo) é `[plano]` se o plano não previu o evento,
    `[execucao]` se previu.
+9. **Fluxo gerado de spec (`fluig-fluxo`):** a spec do plano passa no validador local
+   (`node --input-type=module -e "import { readFileSync } from 'node:fs'; import { validarSpec } from '$FLUIG_MCP_DIR/src/flow/validar.js'; const r = await validarSpec(JSON.parse(readFileSync('<spec>','utf8')), { versaoAlvo: '<v>' }); console.log(JSON.stringify(r));"`
+   — ou equivalente em arquivo `.mjs` no temporário), o `.process` gerado passa no `verificar_process.py`, e todo
+   `servicetaskN`/número de atividade usado nos scripts bate com os elementos do `.process`. Spec divergente do
+   plano é `[execucao]`; decisão de negócio ausente no plano (papel, campo, tratamento) é `[plano]`.
 
 Aponte só defeito: o que quebra em execução, viola o plano ou viola as regras acima.
 Preferência de estilo não é item.
@@ -81,7 +86,7 @@ linhas tocadas pela correção (regressão). Não reabra o que já estava aprova
 
 ```
 VEREDITO: APROVADO | REPROVADO
-CHECKLIST: escopo OK|X · fluxo OK|X · campos OK|X · validacao OK|X · rhino OK|X · linhas OK|X · publicacao OK|X|NA · diagrama OK|X|NA
+CHECKLIST: escopo OK|X · fluxo OK|X · campos OK|X · validacao OK|X · rhino OK|X · linhas OK|X · publicacao OK|X|NA · diagrama OK|X|NA · fluxo-spec OK|X|NA
 ITENS:
 1. [execucao|plano] <arquivo>:<linha> — <defeito> — <correção esperada>
 CONFERIDO NO SERVIDOR: <o que foi consultado e o resultado, em uma linha cada>

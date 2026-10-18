@@ -1,0 +1,218 @@
+{
+  "processId": "exemploOu",
+  "descricao": "Exemplo completo do gerador de fluxo",
+  "formId": 1001,
+  "atividades": [
+    {
+      "id": "ini",
+      "tipo": "inicio",
+      "nome": "Início",
+      "posicao": {
+        "x": 60,
+        "y": 100
+      }
+    },
+    {
+      "id": "sol",
+      "tipo": "humana",
+      "nome": "Solicitar",
+      "responsavel": {
+        "tipo": "pool_papel",
+        "valor": "admin"
+      },
+      "posicao": {
+        "x": 160,
+        "y": 85
+      }
+    },
+    {
+      "id": "erp",
+      "tipo": "servico",
+      "nome": "Integrar ERP",
+      "execucao": "automatizada",
+      "tratamentoErro": "trata",
+      "posicao": {
+        "x": 330,
+        "y": 85
+      }
+    },
+    {
+      "id": "trata",
+      "tipo": "humana",
+      "nome": "Tratar erro da integração",
+      "responsavel": {
+        "tipo": "pool_papel",
+        "valor": "admin"
+      },
+      "posicao": {
+        "x": 330,
+        "y": 220
+      }
+    },
+    {
+      "id": "gw",
+      "tipo": "gateway_exclusivo",
+      "nome": "Aprovado?",
+      "posicao": {
+        "x": 500,
+        "y": 90
+      }
+    },
+    {
+      "id": "abre",
+      "tipo": "gateway_paralelo_abertura",
+      "nome": "Abre",
+      "posicao": {
+        "x": 620,
+        "y": 90
+      }
+    },
+    {
+      "id": "ges",
+      "tipo": "humana",
+      "nome": "Aprovar gestor",
+      "responsavel": {
+        "tipo": "papel",
+        "valor": "gestor"
+      },
+      "posicao": {
+        "x": 740,
+        "y": 20
+      }
+    },
+    {
+      "id": "fin",
+      "tipo": "humana",
+      "nome": "Aprovar financeiro",
+      "responsavel": {
+        "tipo": "pool_papel",
+        "valor": "financeiro"
+      },
+      "posicao": {
+        "x": 740,
+        "y": 180
+      }
+    },
+    {
+      "id": "junta",
+      "tipo": "gateway_paralelo_juncao",
+      "nome": "Junta",
+      "posicao": {
+        "x": 920,
+        "y": 90
+      }
+    },
+    {
+      "id": "avisa",
+      "tipo": "servico",
+      "nome": "Notificar",
+      "execucao": "imediata",
+      "posicao": {
+        "x": 1020,
+        "y": 85
+      }
+    },
+    {
+      "id": "fim",
+      "tipo": "fim",
+      "nome": "Fim",
+      "posicao": {
+        "x": 1200,
+        "y": 100
+      }
+    },
+    {
+      "id": "canc",
+      "tipo": "cancelamento",
+      "nome": "Cancelado",
+      "posicao": {
+        "x": 520,
+        "y": 300
+      }
+    }
+  ],
+  "ligacoes": [
+    {
+      "de": "ini",
+      "para": "sol"
+    },
+    {
+      "de": "sol",
+      "para": "erp"
+    },
+    {
+      "de": "erp",
+      "para": "gw"
+    },
+    {
+      "de": "trata",
+      "para": "erp"
+    },
+    {
+      "de": "gw",
+      "para": "abre",
+      "ordem": 1,
+      "condicao": {
+        "regras": [
+          {
+            "campo": "valor",
+            "op": "maior",
+            "valor": "100"
+          },
+          {
+            "campo": "aprovado",
+            "op": "igual",
+            "valor": "sim"
+          }
+        ]
+      }
+    },
+    {
+      "de": "gw",
+      "para": "abre",
+      "ordem": 3,
+      "condicao": {
+        "regras": [
+          {
+            "campo": "urgente",
+            "op": "igual",
+            "valor": "sim"
+          }
+        ]
+      }
+    },
+    {
+      "de": "gw",
+      "para": "canc",
+      "ordem": 2,
+      "condicao": {
+        "js": "true"
+      },
+      "padrao": true
+    },
+    {
+      "de": "abre",
+      "para": "ges"
+    },
+    {
+      "de": "abre",
+      "para": "fin"
+    },
+    {
+      "de": "ges",
+      "para": "junta"
+    },
+    {
+      "de": "fin",
+      "para": "junta"
+    },
+    {
+      "de": "junta",
+      "para": "avisa"
+    },
+    {
+      "de": "avisa",
+      "para": "fim"
+    }
+  ]
+}

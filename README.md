@@ -10,7 +10,7 @@ Substitui a cópia de `.agents/skills/` em cada cliente — o mesmo motivo do
 
 | Pasta | O que tem |
 |---|---|
-| `skills/` | Dataset, form, validação, workflow/eventos de servidor (`fluig-workflow`), widget/layout, Style Guide, review e correção (segurança, performance, acessibilidade), migração jQuery → ES6+, fluigcli, teste funcional de processos (`fluig-tester`), orquestrador de testes automatizados (`fluig-teste`: fluxo pela API do fluigcli + formulário headless, com suíte versionada em `testes/<processo>.json`) |
+| `skills/` | Dataset, form, validação, workflow/eventos de servidor (`fluig-workflow`), montagem de fluxo de processo a partir de spec pelas ferramentas `fluig_flow_*` do mcp-fluig (`fluig-fluxo`), widget/layout, Style Guide, review e correção (segurança, performance, acessibilidade), migração jQuery → ES6+, fluigcli, teste funcional de processos (`fluig-tester`), orquestrador de testes automatizados (`fluig-teste`: fluxo pela API do fluigcli + formulário headless, com suíte versionada em `testes/<processo>.json`) |
 | `agents/` | `fluig-executor` e `fluig-revisor` (implementação e revisão de plano), `fluig-test-runner` e `fluig-test-auditor` (execução e auditoria de testes) |
 | `context/` | Arquitetura, convenções, tecnologias e Style Guide (origem: TOTVS fluig-agent-skills) |
 | `examples/` | Widget e layout mínimos oficiais |
@@ -56,6 +56,10 @@ A skill `fluig-tester` é texto próprio, inspirado na metodologia de
 
 A skill `fluig-workflow` é texto próprio, inspirado em
 [Wisleey/Skill-FLUIG-TOTVS-Cursor](https://github.com/Wisleey/Skill-FLUIG-TOTVS-Cursor).
+
+A skill `fluig-fluxo` é texto próprio e opera as ferramentas `fluig_flow_*` do servidor MCP mcp-fluig;
+o `.process` sai das funções da extensão Fluiggers e o ECM30 do conversor do Fluig Studio instalado na
+máquina do usuário.
 
 ## Licença
 

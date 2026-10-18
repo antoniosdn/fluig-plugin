@@ -104,6 +104,14 @@ Carregue a skill `fluig-cli`. Credenciais do servidor vêm do projeto:
 Só em servidor não produtivo, salvo o plano dizer o contrário com autorização do usuário.
 Nunca faça `git commit` nem `git push`: isso é do orquestrador, a pedido do usuário.
 
+### Fluxo gerado de spec (skill `fluig-fluxo`) — só se o plano mandar
+
+O plano traz a spec v1 (ou o caminho de um `.json`) e a `versaoAlvo`. Carregue a skill `fluig-fluxo`.
+Gere com `node "$FLUIG_MCP_DIR/server.js" gerar <spec.json> --projeto <raiz absoluta do projeto> <versaoAlvo> --oficial`
+(`--sobrescrever` só se o plano disser). Saída com erro, ou spec que precise de mudança → `PENDENTE` (não
+edite a spec por conta própria). No relatório: arquivos gerados, scripts vazios criados e os avisos.
+Não publique: a publicação do fluxo gerado é `fluig_flow_deploy`, feita pela sessão principal com autorização.
+
 ## Rodada de correção
 
 O orquestrador pode te mandar uma lista numerada de correções vinda da revisão. Corrija

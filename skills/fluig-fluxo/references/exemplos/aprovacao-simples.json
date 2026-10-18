@@ -1,0 +1,20 @@
+{
+  "processId": "exemploAprovacao",
+  "descricao": "Solicitação de compra com aprovação do gestor",
+  "formId": 1001,
+  "atividades": [
+    { "id": "ini", "tipo": "inicio", "nome": "Solicitar compra" },
+    { "id": "apr", "tipo": "humana", "nome": "Aprovar compra", "responsavel": { "tipo": "pool_papel", "valor": "gestorCompras" } },
+    { "id": "gw", "tipo": "gateway_exclusivo", "nome": "Aprovado?" },
+    { "id": "comp", "tipo": "humana", "nome": "Efetuar compra", "responsavel": { "tipo": "papel", "valor": "compras" } },
+    { "id": "fim", "tipo": "fim", "nome": "Compra concluída" },
+    { "id": "rep", "tipo": "fim", "nome": "Compra reprovada" }
+  ],
+  "ligacoes": [
+    { "de": "ini", "para": "apr" },
+    { "de": "apr", "para": "gw" },
+    { "de": "gw", "para": "comp", "ordem": 1, "condicao": { "regras": [ { "campo": "decisaoGestor", "op": "igual", "valor": "aprovado" } ] } },
+    { "de": "gw", "para": "rep", "padrao": true },
+    { "de": "comp", "para": "fim" }
+  ]
+}
