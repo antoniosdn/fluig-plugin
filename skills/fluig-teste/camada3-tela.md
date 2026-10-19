@@ -28,8 +28,11 @@ Configuração no `.claude/launch.json` do projeto (ajuste o `.env`):
 iframe do formulário saem com a URL configurada no WCM (`WCM_CONFIGURATION.SERVER_URL`). Se ela
 for uma URL pública (ex.: `https://fluig.empresa.com.br`) e o `.env` usar o IP interno, o iframe
 aponta para o host público, fica com origem diferente do proxy e o teste não lê o formulário
-(`SecurityError ... cross-origin frame`). Nesse caso, passe o host público: `proxy_tela.mjs --host
-https://fluig.empresa.com.br --upstream 8786 --port 8787`. Para conferir, veja o
+(`SecurityError ... cross-origin frame`). Nesse caso, passe **os dois hosts**, o do `.env` e o público,
+separados por vírgula: `proxy_tela.mjs --host http://10.10.0.6:9090,https://fluig.empresa.com.br
+--upstream 8786 --port 8787`. Só o público não basta: no carregamento o iframe ainda passa pelo host
+interno, o portal perde o formulário e o Enviar manda `formData: []` (o servidor acusa todos os campos
+vazios e o `beforeSendValidate` não roda). Para conferir, veja o
 `document.getElementById('workflowView-cardViewer').src`: ele tem de começar por `http://localhost:8787`.
 
 **`fluigcli dev` sem rota para o servidor** ("no route to host" no log do preview, mas o mesmo host
