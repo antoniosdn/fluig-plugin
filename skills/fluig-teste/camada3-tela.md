@@ -24,6 +24,19 @@ Configuração no `.claude/launch.json` do projeto (ajuste o `.env`):
 
 `preview_start` com esse nome. Se outro `fluigcli dev` estiver na 8787, pare antes (`preview_stop`).
 
+**Host a reescrever = "URL do servidor" do WCM**, não o host do `.env`. O `formHtml` e o `src` do
+iframe do formulário saem com a URL configurada no WCM (`WCM_CONFIGURATION.SERVER_URL`). Se ela
+for uma URL pública (ex.: `https://fluig.empresa.com.br`) e o `.env` usar o IP interno, o iframe
+aponta para o host público, fica com origem diferente do proxy e o teste não lê o formulário
+(`SecurityError ... cross-origin frame`). Nesse caso, passe o host público: `proxy_tela.mjs --host
+https://fluig.empresa.com.br --upstream 8786 --port 8787`. Para conferir, veja o
+`document.getElementById('workflowView-cardViewer').src`: ele tem de começar por `http://localhost:8787`.
+
+**`fluigcli dev` sem rota para o servidor** ("no route to host" no log do preview, mas o mesmo host
+responde pelo terminal): o processo aberto pelo app não tem acesso à rede local do macOS. Suba o
+`fluigcli dev --port 8786 --non-interactive` pelo terminal (Bash em segundo plano, com o `.env`
+carregado) e deixe no `launch.json` só o `proxy_tela.mjs` (configuração sem o `fluigcli dev`).
+
 ## 2. URLs
 
 | Para | URL (em `http://localhost:8787`) |
