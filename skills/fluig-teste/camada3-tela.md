@@ -5,7 +5,21 @@ Roda **uma vez por processo novo ou ajustado**, antes das camadas 1 e 2, na **se
 `displayFields` no servidor, `beforeSendValidate` no envio, zooms com dataset real, botão Enviar,
 anexos e a tela de cada etapa.
 
-## 1. Proxy da tela
+## 0. Por onde entrar: URL pública ou proxy
+
+**Se a suíte tem `tela.url`** (servidor com URL pública, ex.: `https://fluig.empresa.com.br/portal/p/01/home`),
+o teste de tela vai **direto por ela, sem o proxy da CLI** (decisão do usuário, 19/10/2026):
+
+- abrir `tela.url` no navegador do app (`preview_start` com `url`); não subir o `fluigcli dev` nem o
+  `proxy_tela.mjs`;
+- o login é do usuário: se cair na tela de login, pedir que ele entre no navegador do app (o perfil
+  guarda a sessão para os próximos testes). Não digitar senha;
+- as URLs da seção 2 valem com o host público no lugar de `http://localhost:8787`;
+- o `fluigcli` (consultas, `task assume`) continua no host interno do `.env` da suíte.
+
+**Sem `tela.url`**, seguir pelo proxy (seção 1).
+
+## 1. Proxy da tela (servidor sem URL pública)
 
 O `fluigcli dev` abre o portal já logado (sem senha), mas não reescreve JSON: o quadro do
 formulário vem do `formHtml` do `getDefinitionProcess`, com o host do servidor, e fica em branco.

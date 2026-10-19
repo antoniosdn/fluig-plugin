@@ -52,8 +52,9 @@ Peças: `scripts/executar_fluxo.py` (camada 1), `scripts/testar_formulario.py` (
 
 **Primeiro: camada 3, caminho feliz pela tela** — uma vez por processo novo ou ajustado (decisão
 do usuário, 15/10/2026). Roda na **sessão principal** (os subagentes não têm o navegador do app):
-abre a solicitação, preenche e envia cada etapa pelo portal até o fim, pelo proxy
-`scripts/proxy_tela.mjs` na frente do `fluigcli dev`. Roteiro completo, URLs, anexo e o que
+abre a solicitação, preenche e envia cada etapa pelo portal até o fim. Com `tela.url` na suíte
+(servidor com URL pública), entra direto por ela, sem o proxy da CLI, com o login do usuário; sem
+`tela.url`, pelo proxy `scripts/proxy_tela.mjs` na frente do `fluigcli dev`. Roteiro completo, URLs, anexo e o que
 conferir: `camada3-tela.md`. Defeito achado aqui vale como defeito do processo; limitação da
 ferramenta (máscara, select nativo) não.
 
