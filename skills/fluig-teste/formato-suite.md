@@ -15,7 +15,6 @@ Uma suíte por processo, versionada no projeto do cliente, em `testes/<processo>
   "anexos": ["testes/anexos/documento-teste.pdf"],           // opcional: anexados no início (também por cenário)
 
   "tela": {                           // CAMADA 3 — caminho feliz pela tela (roteiro: camada3-tela.md)
-    "url": "https://fluig.empresa.com.br/portal/p/01/home",  // opcional: URL pública → teste direto por ela, sem proxy da CLI
     "descricao": "prestador já cadastrado, aprovado, até a conclusão",
     "passos": [                        // o que preencher/conferir em cada etapa, para a sessão principal seguir
       { "etapa": 0, "preencher": "primeirasol=Não; Empresa=ASCENDRA (zoom); ...", "conferir": "cabeçalho preenchido; data do pagamento 10/25" },
