@@ -51,7 +51,7 @@
 
 ## Recomendações Gerais
 
-- <recomendação transversal ou próximo passo, ex.: aplicar a skill `fluig-internationalization` no arquivo todo>
+- <recomendação transversal ou próximo passo, ex.: aplicar a skill `fluig-validate-security` no arquivo todo>
 - <referência à skill especializada para aprofundamento, quando aplicável>
 
 ## Pontos Positivos

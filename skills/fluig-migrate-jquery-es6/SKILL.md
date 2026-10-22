@@ -1,6 +1,6 @@
 ---
 name: fluig-migrate-jquery-es6
-description: Migra e moderniza código jQuery para JavaScript ES6+ em customizações Fluig, preservando o comportamento, a internacionalização e a compatibilidade com a plataforma. Use quando o desenvolvedor pedir para converter/atualizar um trecho ou arquivo legado em jQuery para ES6+ (DOM nativo, eventos, REST via APIs públicas).
+description: Migra e moderniza código jQuery para JavaScript ES6+ em customizações Fluig, preservando o comportamento, a internacionalização e a compatibilidade com a plataforma. Use quando o desenvolvedor pedir para converter/atualizar um trecho ou arquivo legado em jQuery para ES6+ (DOM nativo, eventos, REST via APIs públicas). Só código de browser (widget, layout, formulário HTML/JS); não use para dataset ou script de workflow (Rhino/ECMA 5).
 argument-hint: o código jQuery alvo a ser migrado (trecho ou arquivo selecionado)
 ---
 

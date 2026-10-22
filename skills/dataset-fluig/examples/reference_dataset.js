@@ -4,7 +4,7 @@
  * Versão: 1.0
  *
  * Descrição:
- * Dataset de referência seguindo todos os padrões da skill fluig-expert.
+ * Dataset de referência seguindo os padrões da skill dataset-fluig.
  * Demonstra extração de constraints, chamada de dataset interno e tratamento de erros.
  *
  * Constraints esperadas:

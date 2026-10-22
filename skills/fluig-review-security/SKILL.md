@@ -1,6 +1,6 @@
 ---
 name: fluig-review-security
-description: Revisa a segurança de código frontend de customização Fluig sob a ótica do OWASP Top 10 2025 (XSS, injeção, exposição de dados sensíveis, configuração insegura) usando apenas API pública (WCMAPI.validateXSS, DOMPurify.sanitize) e produz achados classificados por severidade, cada um referenciando a regra do arquivo de contexto. Use quando o desenvolvedor pedir uma revisão de segurança de um trecho ou arquivo antes de merge, sem reescrever o código.
+description: Revisa a segurança de código frontend de customização Fluig sob a ótica do OWASP Top 10 2025 (XSS, injeção, exposição de dados sensíveis, configuração insegura) usando apenas API pública (WCMAPI.validateXSS, DOMPurify.sanitize) e produz achados classificados por severidade, cada um referenciando a regra do arquivo de contexto. Use quando o desenvolvedor pedir uma revisão de segurança de um trecho ou arquivo antes de merge, sem reescrever o código. Só código de browser (widget, layout, formulário HTML/JS); não use para dataset ou script de workflow (Rhino/ECMA 5). Só aponta achados, não reescreve; para corrigir use `fluig-validate-security`.
 argument-hint: o código/arquivo frontend alvo da revisão de segurança (trecho ou arquivo selecionado), idealmente com a origem dos dados do usuário
 ---
 

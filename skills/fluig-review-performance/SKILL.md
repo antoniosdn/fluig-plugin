@@ -1,6 +1,6 @@
 ---
 name: fluig-review-performance
-description: Revisa a performance de código frontend Fluig (manipulação de DOM, eventos de alta frequência, requisições REST e carga de dados) e produz achados classificados por severidade, cada um referenciando a regra correspondente do arquivo de contexto. Use quando o desenvolvedor pedir uma revisão focada em performance de um widget/Custom Element antes de merge, sem reescrever o código.
+description: Revisa a performance de código frontend Fluig (manipulação de DOM, eventos de alta frequência, requisições REST e carga de dados) e produz achados classificados por severidade, cada um referenciando a regra correspondente do arquivo de contexto. Use quando o desenvolvedor pedir uma revisão focada em performance de um widget/Custom Element antes de merge, sem reescrever o código. Só código de browser (widget, layout, formulário HTML/JS); não use para dataset ou script de workflow (Rhino/ECMA 5). Só aponta achados, não reescreve; para corrigir use `fluig-optimize-performance`.
 argument-hint: o código/arquivo frontend alvo da revisão de performance (trecho ou arquivo selecionado), idealmente com o sintoma observado
 ---
 

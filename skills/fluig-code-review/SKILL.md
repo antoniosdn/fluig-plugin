@@ -1,6 +1,6 @@
 ---
 name: fluig-code-review
-description: Revisa código frontend de customização Fluig (widgets com SuperWidget, Custom Elements, FreeMarker e CSS) e produz um relatório de achados classificados por severidade, cada um referenciando a regra correspondente dos arquivos de contexto. Use quando o desenvolvedor pedir revisão geral de qualidade de um trecho ou arquivo antes de merge, cobrindo ES6+, convenções de widget/Custom Element, i18n, segurança, CSS/Style Guide, acessibilidade e performance.
+description: Revisa código frontend de customização Fluig (widgets com SuperWidget, Custom Elements, FreeMarker e CSS) e produz um relatório de achados classificados por severidade, cada um referenciando a regra correspondente dos arquivos de contexto. Use quando o desenvolvedor pedir revisão geral de qualidade de um trecho ou arquivo antes de merge, cobrindo ES6+, convenções de widget/Custom Element, i18n, segurança, CSS/Style Guide, acessibilidade e performance. Só código de browser (widget, layout, formulário HTML/JS); não use para dataset ou script de workflow (Rhino/ECMA 5). Só aponta achados, não reescreve; para corrigir use `fluig-validate-security`, `fluig-optimize-performance` ou `fluig-improve-accessibility`.
 argument-hint: o código/arquivo frontend alvo da revisão (trecho ou arquivo selecionado), idealmente com o tipo de artefato
 ---
 
@@ -19,7 +19,7 @@ Revisar, com responsabilidade única, a **qualidade geral de código frontend Fl
 - Quando há suspeita de múltiplas categorias de problema no mesmo arquivo.
 - Para preparar um relatório de revisão estruturado a ser anexado a um pull request.
 
-> Para revisões aprofundadas em um único eixo, prefira as skills especializadas: `fluig-review-performance`, `fluig-review-security`, `fluig-review-accessibility` e `fluig-best-practices`.
+> Para revisões aprofundadas em um único eixo, prefira as skills especializadas: `fluig-review-performance`, `fluig-review-security` e `fluig-review-accessibility`.
 
 ## Entradas Esperadas
 
@@ -66,7 +66,7 @@ Classifique **cada achado** em um destes níveis:
 1. Identificar o tipo de artefato e os eixos aplicáveis (ES6+, widget/Custom Element, i18n, segurança, CSS/Style Guide, acessibilidade, performance).
 2. Percorrer o **checklist completo** em [assets/checklist.md](assets/checklist.md), categoria por categoria.
 3. Para cada desvio, registrar um achado com: localização, descrição, **severidade** (escala acima) e a **regra de contexto** correspondente (`conventions.md` ou `style-guide.md`, com a seção).
-4. Recomendar a correção objetiva de cada achado, referenciando a skill especializada quando fizer sentido (ex.: `fluig-validate-security`, `fluig-dark-mode`, `fluig-internationalization`).
+4. Recomendar a correção objetiva de cada achado, referenciando a skill especializada quando fizer sentido (ex.: `fluig-validate-security`, `fluig-dark-mode`, `fluig-improve-accessibility`).
 5. Consolidar os achados no formato de [assets/output-template.md](assets/output-template.md), ordenando do mais grave ao menos grave.
 6. Validar a própria revisão com o checklist de validação abaixo antes de entregar.
 

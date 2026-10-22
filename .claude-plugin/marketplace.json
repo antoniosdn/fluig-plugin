@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "fluig",
-  "description": "Plugin Fluig para Claude Code.",
+  "description": "Marketplace do plugin fluig para Claude Code: customização TOTVS Fluig (skills, agentes executor/revisor e orquestrador de testes).",
   "owner": {
     "name": "Antonio",
     "url": "https://github.com/antoniosdn"
@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "fluig",
-      "description": "Skills e regras para customização TOTVS Fluig.",
+      "description": "Especialista Fluig: datasets ECMA 5/Rhino, formulários, workflow, widgets, layouts, Style Guide, fluigcli, montagem de fluxo de processo a partir de spec (mcp-fluig), agentes executor/revisor e orquestrador de testes. Regras de cliente ficam no AGENTS.md do projeto.",
       "source": "./",
       "category": "development"
     }

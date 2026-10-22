@@ -1,6 +1,6 @@
 ---
 name: fluig-review-accessibility
-description: Revisa a acessibilidade de markup/UI de customizações Fluig (HTML semântico, rótulos, navegação por teclado, foco visível, ARIA, texto alternativo e contraste de cor) e produz achados classificados por severidade alinhados às WCAG, cada um referenciando a regra do arquivo de contexto. Use quando o desenvolvedor pedir uma revisão de acessibilidade de um trecho de markup ou componente antes de merge, sem reescrever o código.
+description: Revisa a acessibilidade de markup/UI de customizações Fluig (HTML semântico, rótulos, navegação por teclado, foco visível, ARIA, texto alternativo e contraste de cor) e produz achados classificados por severidade alinhados às WCAG, cada um referenciando a regra do arquivo de contexto. Use quando o desenvolvedor pedir uma revisão de acessibilidade de um trecho de markup ou componente antes de merge, sem reescrever o código. Só código de browser (widget, layout, formulário HTML/JS); não use para dataset ou script de workflow (Rhino/ECMA 5). Só aponta achados, não reescreve; para corrigir use `fluig-improve-accessibility`.
 argument-hint: o markup/componente alvo da revisão de acessibilidade (trecho ou arquivo selecionado), idealmente com o contexto de uso
 ---
 

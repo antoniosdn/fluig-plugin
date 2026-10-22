@@ -1,6 +1,6 @@
 ---
 name: fluig-improve-accessibility
-description: Melhora a acessibilidade de markup/UI de customizações Fluig — HTML semântico, rótulos, navegação por teclado, foco visível, ARIA, texto alternativo e contraste de cor — preservando comportamento, internacionalização e compatibilidade com a plataforma. Use quando o desenvolvedor pedir para tornar acessível um trecho de markup ou componente de interface (widget, layout, Custom Element).
+description: Melhora a acessibilidade de markup/UI de customizações Fluig — HTML semântico, rótulos, navegação por teclado, foco visível, ARIA, texto alternativo e contraste de cor — preservando comportamento, internacionalização e compatibilidade com a plataforma. Use quando o desenvolvedor pedir para tornar acessível um trecho de markup ou componente de interface (widget, layout, Custom Element). Só código de browser (widget, layout, formulário HTML/JS); não use para dataset ou script de workflow (Rhino/ECMA 5). Para só revisar sem alterar use `fluig-review-accessibility`.
 argument-hint: o markup/componente alvo a tornar acessível (trecho ou arquivo selecionado), idealmente com o contexto de uso
 ---
 

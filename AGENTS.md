@@ -17,24 +17,28 @@ Responder e documentar em Português (BR). Preservar nomes técnicos do Fluig
 
 ## Skills deste plugin
 
+Tabela canônica de pedido → skill (o `README.md` repete esta tabela para leitura humana).
+
 | Pedido | Skill |
 |---|---|
 | Preparar / conferir máquina e projeto (fluigcli, mcp-fluig do fork antoniosdn, `FLUIG_MCP_DIR`, registro MCP, conversor do Studio, runtimes) | `fluig-preparar` |
-| Dataset novo ou refatorar | `dataset-fluig` / `fluig-dataset` |
+| Dataset novo, refatorar ou auditar (inclui dataset de ação `saveAndSendTask`/`startProcess`) | `dataset-fluig` |
 | Form, zoom, pai-filho, anexo | `form-fluig` |
 | Evento de workflow, `displayFields`/`enableFields`/`validateForm`, service task, gateway, `.process` | `fluig-workflow` |
 | Fluxo de processo novo a partir de descrição (spec → .process + ECM30 + SVG pelo mcp-fluig, publicação em teste) | `fluig-fluxo` |
 | `beforeSendValidate` / obrigatório | `fluig-validacao` |
 | Widget WCM nova | `fluig-scaffolding-widget` |
 | Layout WCM novo | `fluig-scaffolding-layout` |
+| Trocar CSS próprio por Style Guide | `fluig-style-guide-helpers` |
+| Dark mode (cores fixas → `var(--fs-color-*)`) | `fluig-dark-mode` |
 | Publicar / importar / diff / audit / deploy / log / helper | `fluig-cli` |
-| Review de UI / segurança / a11y | `fluig-code-review` e irmãs |
+| Revisar frontend sem alterar (geral, segurança, performance, acessibilidade) | `fluig-code-review`, `fluig-review-security`, `fluig-review-performance`, `fluig-review-accessibility` |
 | Corrigir XSS / sanitizar entrada no frontend | `fluig-validate-security` |
 | Otimizar performance de widget/tela | `fluig-optimize-performance` |
 | Corrigir acessibilidade de markup | `fluig-improve-accessibility` |
 | Migrar jQuery → ES6+ (só código de browser) | `fluig-migrate-jquery-es6` |
-| Teste funcional de processo pela interface | `fluig-tester` |
-| Testar / regressão automatizada de processo (API do fluigcli + formulário headless) | `fluig-teste` (orquestrador) |
+| Testar / regressão automatizada de processo (suíte `testes/<processo>.json`, API do fluigcli + formulário headless) | `fluig-teste` (orquestrador) |
+| Teste manual pela interface com evidência para aceite ou GMUD, sem suíte | `fluig-tester` |
 
 ## Agentes deste plugin
 

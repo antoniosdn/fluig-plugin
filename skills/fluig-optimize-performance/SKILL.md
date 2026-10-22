@@ -1,6 +1,6 @@
 ---
 name: fluig-optimize-performance
-description: Otimiza a performance de código frontend Fluig (manipulação de DOM, eventos, requisições e carga de dados) preservando o comportamento, a internacionalização e a compatibilidade com a plataforma. Use quando o desenvolvedor relatar lentidão, travamentos, reflows excessivos ou muitas requisições em um widget/Custom Element e pedir para otimizar um trecho ou arquivo.
+description: Otimiza a performance de código frontend Fluig (manipulação de DOM, eventos, requisições e carga de dados) preservando o comportamento, a internacionalização e a compatibilidade com a plataforma. Use quando o desenvolvedor relatar lentidão, travamentos, reflows excessivos ou muitas requisições em um widget/Custom Element e pedir para otimizar um trecho ou arquivo. Só código de browser (widget, layout, formulário HTML/JS); não use para dataset ou script de workflow (Rhino/ECMA 5). Para só revisar sem alterar use `fluig-review-performance`.
 argument-hint: o código/artefato frontend alvo a otimizar (trecho ou arquivo selecionado), idealmente com o sintoma observado
 ---
 

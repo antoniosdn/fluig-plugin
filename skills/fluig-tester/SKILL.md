@@ -7,7 +7,10 @@ description: >
   Use quando o usuário pedir para testar, homologar ou validar ponta a ponta um
   processo/workflow Fluig, gerar evidência de teste para GMUD ou aceite, ou
   mencionar "fluig-tester", "testar o processo", "caminho feliz", "roteiro de
-  teste". Não use para corrigir, publicar ou alterar o processo.
+  teste". Use quando o pedido for evidência de teste manual pela interface
+  para aceite ou GMUD. NÃO use para regressão automatizada, suíte
+  testes/<processo>.json ou "rodar a regressão" (isso é fluig-teste), nem para
+  corrigir, publicar ou alterar o processo.
 ---
 
 # Fluig — Teste Funcional de Processos
@@ -333,4 +336,8 @@ senha, token ou dado pessoal sem máscara.
 - **`fluig-executor` / `fluig-revisor`** — se o teste revelar defeito e o
   usuário pedir a correção, a correção é outra tarefa (plano → executor →
   revisor). Esta skill só testa.
+- **`fluig-teste`** — regressão automatizada com suíte versionada em
+  `testes/<processo>.json` (API do fluigcli + formulário headless). Pedido de
+  "rodar a regressão" ou de montar/rodar a suíte vai para ela; esta skill fica
+  com o teste manual pela interface e a evidência para aceite ou GMUD.
 - **Skill de GMUD do cliente**, se existir — usa o bloco "Evidência para GMUD".

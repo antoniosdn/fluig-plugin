@@ -45,7 +45,7 @@ o plano manda alterar e seguir o padrão do arquivo (nomes, indentação, estilo
   `verificaCampos` do `beforeSendValidate`. Campo condicional = pôr/tirar a classe. Não criar
   validação própria em paralelo (mensagem sai duplicada).
 - **Tabela pai/filho:** padrão nativo (`tablename`, `wdkAddChild`, `fnWdkRemoveChild`, ids com
-  `___<índice>`). Carregue a skill `fluig-pai-filho` se o plano mexer nisso.
+  `___<índice>`). Carregue a skill `form-fluig` (seção pai-filho) se o plano mexer nisso.
 - **Ajuda contextual:** `docs/AJUDA_PROCESSO.md` do projeto, quando existir, é a regra.
   `ajuda_motor.js` e `ajuda.css` são cópias idênticas da referência: nunca edite por processo.
 - `hAPI.setTaskComments(usuario, processo, thread, texto)` tem 4 argumentos.

@@ -1,9 +1,3 @@
----
-description: Datasets e scripts de workflow Fluig usam Rhino ECMA 5
-globs: datasets/**/*.js,workflow/scripts/**/*.js,forms/**/events/displayFields.js
-alwaysApply: false
----
-
 # Fluig — ECMA 5 / Rhino
 
 Arquivos em `datasets/`, `workflow/scripts/` e `events/displayFields.js` rodam no

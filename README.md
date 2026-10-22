@@ -84,22 +84,25 @@ pai-filho no formulário", "publica o form"). Também dá para chamar pelo nome:
 
 ### Qual skill para qual pedido
 
+A referência canônica desta tabela é o [`AGENTS.md`](AGENTS.md) do plugin, que é o que o modelo lê;
+esta é uma cópia para consulta.
+
 | Pedido | Skill |
 |---|---|
 | Preparar ou conferir a máquina e o projeto (fluigcli, mcp-fluig, conversor do Studio, runtimes) | `fluig-preparar` |
-| Dataset novo ou refatorar | `dataset-fluig` (padrão do plugin) e `fluig-dataset` (regras Rhino/JSDoc) |
+| Dataset novo, refatorar ou auditar (inclui dataset de ação `saveAndSendTask`/`startProcess`) | `dataset-fluig` |
 | Formulário, zoom, pai-filho, anexo | `form-fluig` |
 | Validação de envio (`beforeSendValidate`, obrigatórios) | `fluig-validacao` |
 | Evento de workflow, `displayFields`/`enableFields`/`validateForm`, service task, gateway, `.process` | `fluig-workflow` |
 | Fluxo de processo novo a partir de uma descrição | `fluig-fluxo` |
 | Widget ou layout WCM novo | `fluig-scaffolding-widget`, `fluig-scaffolding-layout` |
 | Trocar CSS próprio por Style Guide; dark mode | `fluig-style-guide-helpers`, `fluig-dark-mode` |
-| Revisão de frontend (geral, segurança, performance, acessibilidade) | `fluig-code-review`, `fluig-review-*` |
+| Revisar frontend sem alterar (geral, segurança, performance, acessibilidade) | `fluig-code-review`, `fluig-review-security`, `fluig-review-performance`, `fluig-review-accessibility` |
 | Corrigir frontend (XSS, performance, acessibilidade) | `fluig-validate-security`, `fluig-optimize-performance`, `fluig-improve-accessibility` |
 | Migrar jQuery para ES6+ (só código de browser) | `fluig-migrate-jquery-es6` |
 | Publicar, importar, `diff`, `audit`, release, log | `fluig-cli` |
-| Teste automatizado / regressão de processo | `fluig-teste` |
-| Teste funcional pela interface, com evidência para aceite | `fluig-tester` |
+| Testar / regressão automatizada de processo (suíte `testes/<processo>.json`) | `fluig-teste` |
+| Teste manual pela interface com evidência para aceite ou GMUD, sem suíte | `fluig-tester` |
 
 ### Mudança média ou grande: plano → executor → revisor → teste
 
@@ -225,11 +228,11 @@ de papéis e campos.
 
 | Pasta | Conteúdo |
 |---|---|
-| `skills/` | 22 skills (tabela acima) e seus scripts: `fluig-teste/scripts/` (`executar_fluxo.py`, `testar_formulario.py`, `proxy_tela.mjs`), `fluig-workflow/scripts/verificar_process.py` e `fluig-preparar/scripts/conferir_ambiente.py` |
+| `skills/` | 21 skills (tabela acima) e seus scripts: `fluig-teste/scripts/` (`executar_fluxo.py`, `testar_formulario.py`, `proxy_tela.mjs`), `fluig-workflow/scripts/verificar_process.py` e `fluig-preparar/scripts/conferir_ambiente.py` |
 | `agents/` | `fluig-executor` (Sonnet), `fluig-revisor` (Opus), `fluig-test-runner` (Sonnet), `fluig-test-auditor` (Opus) |
-| `context/` | Arquitetura, convenções, tecnologias e Style Guide do Fluig, lidos pelas skills de frontend |
+| `context/` | Arquitetura, convenções, tecnologias e Style Guide do Fluig, lidos pelas skills de frontend (widget, layout, formulário HTML); não servem a datasets nem a scripts de workflow |
 | `examples/` | Widget e layout WCM mínimos |
-| `rules/` | Referência das regras ECMA 5 / Rhino |
+| `rules/` | `fluig-rhino-es5.md`: referência das regras ECMA 5 / Rhino (datasets, scripts de workflow, `displayFields.js`) |
 
 **Não entra no plugin:** Query Store ou endpoints de um cliente, documentação Word timbrada,
 credenciais, IDs de processo, nem binários de terceiros (fluigcli, mcp-fluig, conversor do

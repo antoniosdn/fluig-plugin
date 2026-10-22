@@ -1,6 +1,6 @@
 ---
 name: fluig-teste
-description: Orquestrador de testes de processos TOTVS Fluig em 3 camadas — fluxo pela API do fluigcli (cria e movimenta solicitações reais), formulário em navegador headless e o caminho feliz pela interface real (primeiro teste, pelo proxy autenticado fluigcli dev + proxy_tela). Levanta o processo, monta a suíte testes/<processo>.json, pede aprovação, roda com o subagente fluig-test-runner, audita com o fluig-test-auditor e propõe correção dos defeitos. Use quando o usuário pedir para testar, homologar, rodar a regressão ou "ver se o processo roda certinho", ou digitar /fluig-teste.
+description: Orquestrador de testes de processos TOTVS Fluig em 3 camadas — fluxo pela API do fluigcli (cria e movimenta solicitações reais), formulário em navegador headless e o caminho feliz pela interface real (primeiro teste, pelo proxy autenticado fluigcli dev + proxy_tela). Levanta o processo, monta a suíte testes/<processo>.json, pede aprovação, roda com o subagente fluig-test-runner, audita com o fluig-test-auditor e propõe correção dos defeitos. Use quando o usuário pedir para testar, homologar, rodar a regressão ou "ver se o processo roda certinho", ou digitar /fluig-teste. NÃO use quando o pedido for só evidência de teste manual pela interface para aceite ou GMUD, sem suíte (isso é fluig-tester).
 ---
 
 # /fluig-teste — orquestrador de testes Fluig
@@ -12,6 +12,9 @@ relata.
 Peças: `scripts/executar_fluxo.py` (camada 1), `scripts/testar_formulario.py` (camada 2),
 `formato-suite.md` (formato da suíte), agentes `fluig-test-runner` (Sonnet medium) e
 `fluig-test-auditor` (Opus high).
+
+Fronteira: pedido só de evidência de teste manual pela interface, para aceite ou GMUD, sem suíte
+`testes/<processo>.json`, é da skill `fluig-tester`, não deste orquestrador.
 
 ## Regras invioláveis
 

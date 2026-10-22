@@ -17,7 +17,7 @@ O motor do Fluig é igual em todo processo. O desenho — IDs de atividade, camp
 helpers, integrações — é de cada processo. Esta skill cobre o motor. O desenho
 sai sempre dos arquivos do processo em que o usuário está trabalhando.
 
-Todo arquivo desta skill roda em **Rhino / ECMA 5** (ver `rules/fluig-rhino-es5.mdc`).
+Todo arquivo desta skill roda em **Rhino / ECMA 5** (ver `rules/fluig-rhino-es5.md`).
 Se o arquivo já usa outro estilo, seguir o arquivo.
 
 ## Regras de trabalho

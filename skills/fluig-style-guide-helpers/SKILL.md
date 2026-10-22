@@ -1,6 +1,6 @@
 ---
 name: fluig-style-guide-helpers
-description: Substitui CSS customizado e comportamentos recriados manualmente por helpers, componentes, grid e classes utilitárias do Fluig Style Guide (FLUIGC e Bootstrap 3.4.1), reduzindo código próprio e garantindo consistência visual e adaptação automática ao tema. Use quando o desenvolvedor pedir para trocar estilos/markup customizados por recursos oficiais do Style Guide ou simplificar CSS próprio reutilizando o design system.
+description: Substitui CSS customizado e comportamentos recriados manualmente por helpers, componentes, grid e classes utilitárias do Fluig Style Guide (FLUIGC e Bootstrap 3.4.1), reduzindo código próprio e garantindo consistência visual e adaptação automática ao tema. Use quando o desenvolvedor pedir para trocar estilos/markup customizados por recursos oficiais do Style Guide ou simplificar CSS próprio reutilizando o design system. Só código de browser (widget, layout, formulário HTML/JS); não use para dataset ou script de workflow (Rhino/ECMA 5).
 argument-hint: o código/CSS/markup alvo a substituir por helpers e componentes do Style Guide
 ---
 

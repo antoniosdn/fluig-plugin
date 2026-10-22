@@ -1,6 +1,6 @@
 ---
 name: fluig-dark-mode
-description: Adapta CSS de customizações Fluig ao modo escuro (dark mode) substituindo cores fixas por variáveis CSS de tema no formato var(--fs-color-*), garantindo que o componente acompanhe a troca de tema automaticamente sem código adicional. Use quando o desenvolvedor pedir para dar suporte a dark mode, adaptar estilos ao tema ativo ou remover hexadecimais fixos de cores de um trecho/arquivo CSS.
+description: Adapta CSS de customizações Fluig ao modo escuro (dark mode) substituindo cores fixas por variáveis CSS de tema no formato var(--fs-color-*), garantindo que o componente acompanhe a troca de tema automaticamente sem código adicional. Use quando o desenvolvedor pedir para dar suporte a dark mode, adaptar estilos ao tema ativo ou remover hexadecimais fixos de cores de um trecho/arquivo CSS. Só código de browser (widget, layout, formulário HTML/JS); não use para dataset ou script de workflow (Rhino/ECMA 5).
 argument-hint: o código/CSS alvo a adaptar ao dark mode (trecho ou arquivo com cores fixas)
 ---
 
