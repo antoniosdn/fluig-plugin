@@ -31,7 +31,7 @@ Tabela canônica de pedido → skill (o `README.md` repete esta tabela para leit
 | Layout WCM novo | `fluig-scaffolding-layout` |
 | Trocar CSS próprio por Style Guide | `fluig-style-guide-helpers` |
 | Dark mode (cores fixas → `var(--fs-color-*)`) | `fluig-dark-mode` |
-| Publicar / importar / diff / audit / deploy / log / helper | `fluig-cli` |
+| Publicar / importar / baixar processo existente (scripts, form; XML e SVG pelo mcp-fluig) / diff / audit / deploy / log / helper | `fluig-cli` |
 | Revisar frontend sem alterar (geral, segurança, performance, acessibilidade) | `fluig-code-review`, `fluig-review-security`, `fluig-review-performance`, `fluig-review-accessibility` |
 | Corrigir XSS / sanitizar entrada no frontend | `fluig-validate-security` |
 | Otimizar performance de widget/tela | `fluig-optimize-performance` |
@@ -44,7 +44,7 @@ Tabela canônica de pedido → skill (o `README.md` repete esta tabela para leit
 
 | Agente | Modelo | Papel |
 |---|---|---|
-| `fluig-executor` | Sonnet medium | Implementa um `plano-*.md` aprovado; publica com fluigcli (ou versão de processo via `deployProcess` com imagem) só quando o plano manda |
+| `fluig-executor` | Sonnet medium | Implementa um `plano-*.md` aprovado; publica com fluigcli só quando o plano manda. Versão de processo: edita o `.process`, regenera ECM30 + SVG com `fluig-mcp regenerar` e deixa a publicação para `fluig_flow_deploy` na sessão principal |
 | `fluig-revisor` | Opus high | Revisa o `git diff` contra o plano e o servidor (só leitura) |
 | `fluig-test-runner` | Sonnet medium | Roda a suíte `testes/<processo>.json` aprovada (orquestrador `fluig-teste`) |
 | `fluig-test-auditor` | Opus high | Classifica as falhas (processo × teste × ambiente) e rascunha o plano de correção |

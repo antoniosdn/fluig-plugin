@@ -100,7 +100,7 @@ esta é uma cópia para consulta.
 | Revisar frontend sem alterar (geral, segurança, performance, acessibilidade) | `fluig-code-review`, `fluig-review-security`, `fluig-review-performance`, `fluig-review-accessibility` |
 | Corrigir frontend (XSS, performance, acessibilidade) | `fluig-validate-security`, `fluig-optimize-performance`, `fluig-improve-accessibility` |
 | Migrar jQuery para ES6+ (só código de browser) | `fluig-migrate-jquery-es6` |
-| Publicar, importar, `diff`, `audit`, release, log | `fluig-cli` |
+| Publicar, importar, baixar processo existente (scripts e form pelo fluigcli; XML e SVG pelo mcp-fluig), `diff`, `audit`, release, log | `fluig-cli` |
 | Testar / regressão automatizada de processo (suíte `testes/<processo>.json`) | `fluig-teste` |
 | Teste manual pela interface com evidência para aceite ou GMUD, sem suíte | `fluig-tester` |
 
@@ -111,8 +111,9 @@ Para mudança em vários arquivos, versão nova de processo ou qualquer coisa co
 1. **Planejar** na sessão principal, com o usuário. O plano vira um `plano-<descricao>.md` na
    raiz do projeto e só segue com aprovação.
 2. **Executar** com o agente `fluig-executor`, que recebe só o caminho do plano. Implementa e
-   publica com fluigcli quando o plano manda. Versão de processo com imagem sai pelo mcp-fluig
-   (informar `FLUIG_MCP_DIR`).
+   publica com fluigcli quando o plano manda. Versão de processo: o executor edita o `.process` e
+   regenera ECM30 + SVG com `fluig-mcp regenerar` (informar `FLUIG_MCP_DIR`); quem publica é a
+   sessão principal, com `fluig_flow_deploy` e autorização do usuário.
 3. **Revisar** com o agente `fluig-revisor`: plano + `git diff`, conferindo no servidor
    (só leitura). Devolve APROVADO ou REPROVADO com cada item marcado como erro de execução
    ou de plano.

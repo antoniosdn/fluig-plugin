@@ -102,7 +102,7 @@ Nunca corrija em silêncio: mostre o código, a mensagem e a correção proposta
 
 ## 4. Geração e regeneração (lançados como `ERRO: <mensagem>`)
 
-Fontes: `artefatos.js`, `spec-process.js`, `regenerar.js`, `conversor.js`, `java.js`, `zip.js`, `cli-fluxo.js`.
+Fontes: `artefatos.js`, `spec-process.js`, `regenerar.js`, `comparar.js`, `conversor.js`, `java.js`, `zip.js`, `cli-fluxo.js`.
 
 | Código | Trecho da mensagem | O que fazer |
 |---|---|---|
@@ -119,6 +119,8 @@ Fontes: `artefatos.js`, `spec-process.js`, `regenerar.js`, `conversor.js`, `java
 | `E_CONVERSOR_CACHE` | "Rode de novo: fluig-mcp instalar-conversor" | cache corrompido: reinstalar |
 | `E_CONVERSOR_FALHOU`, `E_ECM30_INVALIDO`, `E_PONTE` | "O conversor do Studio falhou" / "terminou sem gravar" / erro da ponte | conferir Java e `.process`; `conversor: "proprio"` só com o usuário ciente |
 | `E_SVG_INVALIDO` | "não devolveu um SVG válido" | conferir o `.process` |
+| `E_LEITOR` | erro ao ler o `.process` ou o XML na comparação (`comparar.js`) | conferir o arquivo (encoding, XML bem formado); se o `.process` abre no VS Code, relatar como defeito do leitor |
+| `E_GERADO_ILEGIVEL` | "O XML gerado não foi lido de volta" | defeito do gerador: parar, mostrar a mensagem ao usuário e relatar (não contornar) |
 | `E_PLANO_B_RECUSADO` | "O gerador próprio recusa este processo" | instalar o conversor oficial |
 | `E_JAVA_AUSENTE`, `E_JAVA_VERSAO` | "Java 8 ou superior" | instalar Java ou definir `JAVA_HOME`/`FLUIG_MCP_JAVA` |
 | `E_FONTE`, `E_ZIP`, `E_HASH`, `E_BAIXAR` | falhas do `instalar-conversor` | seguir a mensagem; `E_HASH` = arquivo recusado, nada gravado |

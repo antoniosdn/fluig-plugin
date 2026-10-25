@@ -105,6 +105,7 @@ Detalhes, flags e armadilhas por grupo: [reference/comandos.md](reference/comand
 | Objetivo | Comando |
 |---|---|
 | Baixar tudo de um servidor em uso | `clone --only forms,datasets,...` ou `--all` |
+| Baixar um processo existente | scripts: `workflow import <processId> [--version n]`; formulário: `form import <documentId\|nome>`; definição completa (`.ecm30.xml`, com gateways e prazos) e desenho (SVG): ferramentas MCP `fluig_process_export_xml` e `fluig_process_diagram_get` do mcp-fluig. Não há conversão servidor → `.process` do Studio |
 | Publicar artefato | `dataset\|form\|event\|mechanism\|widget\|layout export` |
 | Script de processo sem versão nova (helper) | `workflow export <arquivo>` |
 | Versão nova do processo | `workflow publish <processId> --events a,b` |
@@ -138,7 +139,8 @@ versão do helper. A FluiggersWidget da extensão VS Code é outro componente.
 - `workflow publish` sem `--events` sobe **todos** os scripts locais e pode
   desfazer alteração feita no Studio. Rodar `workflow diff` antes.
 - `clone` e `import` sobrescrevem o local. Commitar antes. `clone` não traz
-  diagrama, GED, páginas nem usuários.
+  diagrama, GED, páginas nem usuários; o diagrama publicado vem do mcp-fluig
+  (`fluig_process_diagram_get`), e a definição completa de `fluig_process_export_xml`.
 - `dataset query` vazio volta como 1 linha em branco (`emptyRowSuspect:true`).
 - Status em `PROCES_WORKFLOW`: 0 aberta, **1 cancelada, 2 concluída** — usar
   `request list --status` em vez de SQL.

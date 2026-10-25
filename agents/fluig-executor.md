@@ -84,22 +84,29 @@ Carregue a skill `fluig-cli`. Credenciais do servidor vêm do projeto:
      `python3 "$W"/verificar_process.py workflow/diagrams/<processId>.process --corrigir`
      Deve terminar com 0 problema(s). `EXE-001` restante → `PENDENTE`. Se o script não conseguir
      corrigir (ERRO), pare e devolva `PENDENTE`; não ajuste as âncoras à mão.
-2. **Regeneração:** a extensão fluiggers do VS Code observa `workflow/diagrams/*.process` e regenera
-   `workflow/.resources/<processId>.ecm30.xml` e `<processId>.processimage.svg` (com os scripts atuais de
-   `workflow/scripts`). Confira que os dois ficaram com data posterior à sua edição. Se não regeneraram
-   (VS Code fechado), pare e devolva `PENDENTE: abrir o VS Code no projeto para regenerar o ecm30`.
-3. **Valide o ecm30** antes de publicar: cada `<WorkflowProcessEvent>` igual ao script local; atividades,
+2. **Regeneração** pela linha de comando do mcp-fluig (sem credencial; não depende do VS Code).
+   Sem `FLUIG_MCP_DIR` (ou sem `$FLUIG_MCP_DIR/server.js`), pare e devolva
+   `PENDENTE: FLUIG_MCP_DIR não definida — rodar a skill fluig-preparar` (mcp-fluig do fork
+   https://github.com/antoniosdn/fluig-mcp; não procure nem clone por conta própria):
+   `node "$FLUIG_MCP_DIR/server.js" regenerar workflow/diagrams/<processId>.process <versaoAlvo> --oficial`
+   `<versaoAlvo>` é a versão do Fluig que o plano indica (`1.8.2` ou `2.0`); plano sem ela → `PENDENTE`.
+   O comando regrava `workflow/.resources/<processId>.ecm30.xml` e `<processId>.processimage.svg` com os
+   scripts atuais de `workflow/scripts`. Saída com `ERRO:` → `PENDENTE` com a mensagem (códigos em
+   `skills/fluig-fluxo/references/codigos.md`); aviso `W_ECM30_NAO_OFICIAL` (conversor do Studio ausente)
+   vai no relatório, não bloqueia.
+3. **Valide o ecm30** regenerado: cada `<WorkflowProcessEvent>` igual ao script local; atividades,
    caminhos e condições iguais ao publicado, salvo o que o plano muda. Diferença inesperada → `PENDENTE`.
-4. **Publique com a imagem** pelo cliente do mcp-fluig (`$FLUIG_MCP_DIR/src/client.js`; sem a variável, pare e devolva `PENDENTE: FLUIG_MCP_DIR não definida — rodar a skill fluig-preparar` (mcp-fluig do fork https://github.com/antoniosdn/fluig-mcp); não procure nem clone por conta própria):
-   `deployProcess(ecm30Xml, { processId, svgXml, confirm: true })` — mesma sequência SOAP da "Exportar
-   Processo" da extensão (cria versão, importa ecm30 + svg, libera). Variáveis do cliente: `FLUIG_HOST`,
-   `FLUIG_USER`, `FLUIG_PASS`, `FLUIG_COMPANY` e `FLUIG_READONLY=0`, vindas do `.env` do projeto
-   (se o `.env` só tiver `FLUIGCLI_PASSWORD`, passe-a como `FLUIG_PASS` no ambiente do comando, sem imprimir).
-   **Nunca** use `importProcessXml` (REST) nem `fluigcli workflow publish` para mudança de diagrama: o
-   primeiro não grava a imagem do diagrama, o segundo reaproveita o diagrama do servidor.
-5. **Confira no servidor:** versão nova ativa (`fluigcli workflow versions`), a mudança do plano
-   (`ESTADO_PROCES`, `LINK_PROCES`, `ESTADO_PROCES_COND`), `fluigcli workflow diff --all-events` com
-   0 diferente(s) e a imagem gravada (`CLB_IMG_PROCES` não nulo em `VERS_DEF_PROCES`).
+4. **Não publique.** A versão sai pela ferramenta MCP `fluig_flow_deploy`, chamada pela sessão principal
+   com autorização do usuário: `processo` = caminho absoluto do `.process`, `novo: false`, `versaoAlvo`,
+   `env: "teste"`, `confirm: true`. Ela regenera de novo, confere papéis e campos no servidor e publica
+   ECM30 + SVG + scripts numa versão nova. Registre isso em `PUBLICACAO` no relatório.
+   **Nunca** use `importProcessXml` (REST), `deployProcess` do `src/client.js` nem
+   `fluigcli workflow publish` para mudança de diagrama: o primeiro não grava a imagem, o segundo pula as
+   conferências do deploy, o terceiro reaproveita o diagrama do servidor.
+5. **Conferência no servidor**, quando o orquestrador pedir depois de publicar: versão nova ativa
+   (`fluigcli workflow versions`), a mudança do plano (`ESTADO_PROCES`, `LINK_PROCES`,
+   `ESTADO_PROCES_COND`), `fluigcli workflow diff --all-events` com 0 diferente(s) e a imagem gravada
+   (`CLB_IMG_PROCES` não nulo em `VERS_DEF_PROCES`).
 
 Só em servidor não produtivo, salvo o plano dizer o contrário com autorização do usuário.
 Nunca faça `git commit` nem `git push`: isso é do orquestrador, a pedido do usuário.
@@ -126,7 +133,7 @@ STATUS: CONCLUIDO | PENDENTE
 ARQUIVOS:
 - <caminho> (criado | alterado) [CRLF|LF]
 STEPS: <n de n concluídos>
-PUBLICACAO: nao pedida | <artefato → diff: 0 diferente(s)> ...
+PUBLICACAO: nao pedida | <artefato → diff: 0 diferente(s)> | versao de processo: ecm30/svg regenerados, publicar com fluig_flow_deploy(processo=<caminho>, novo:false, versaoAlvo=<v>) ...
 DESVIOS: nenhum | <lista curta: step, o que foi diferente e por quê>
 PENDENCIAS: nenhuma | <lista: step ou item, o que falta decidir no plano>
 ```
