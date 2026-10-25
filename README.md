@@ -94,7 +94,7 @@ esta é uma cópia para consulta.
 | Formulário, zoom, pai-filho, anexo | `form-fluig` |
 | Validação de envio (`beforeSendValidate`, obrigatórios) | `fluig-validacao` |
 | Evento de workflow, `displayFields`/`enableFields`/`validateForm`, service task, gateway, `.process` | `fluig-workflow` |
-| Fluxo de processo novo a partir de uma descrição | `fluig-fluxo` |
+| Fluxo de processo novo a partir de uma descrição; reconstruir o `.process` de um processo que só existe no servidor | `fluig-fluxo` |
 | Widget ou layout WCM novo | `fluig-scaffolding-widget`, `fluig-scaffolding-layout` |
 | Trocar CSS próprio por Style Guide; dark mode | `fluig-style-guide-helpers`, `fluig-dark-mode` |
 | Revisar frontend sem alterar (geral, segurança, performance, acessibilidade) | `fluig-code-review`, `fluig-review-security`, `fluig-review-performance`, `fluig-review-accessibility` |

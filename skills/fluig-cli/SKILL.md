@@ -105,7 +105,7 @@ Detalhes, flags e armadilhas por grupo: [reference/comandos.md](reference/comand
 | Objetivo | Comando |
 |---|---|
 | Baixar tudo de um servidor em uso | `clone --only forms,datasets,...` ou `--all` |
-| Baixar um processo existente | scripts: `workflow import <processId> [--version n]`; formulário: `form import <documentId\|nome>`; definição completa (`.ecm30.xml`, com gateways e prazos) e desenho (SVG): ferramentas MCP `fluig_process_export_xml` e `fluig_process_diagram_get` do mcp-fluig. Não há conversão servidor → `.process` do Studio |
+| Baixar um processo existente | scripts: `workflow import <processId> [--version n]`; formulário: `form import <documentId\|nome>`; definição completa (`.ecm30.xml`, com gateways e prazos) e desenho (SVG): ferramentas MCP `fluig_process_export_xml` e `fluig_process_diagram_get` do mcp-fluig. `.process` editável: o servidor não o guarda; a `fluig-fluxo` reconstrói um (`fluig_flow_read` → `fluig_flow_generate` com `projeto`), com perdas |
 | Publicar artefato | `dataset\|form\|event\|mechanism\|widget\|layout export` |
 | Script de processo sem versão nova (helper) | `workflow export <arquivo>` |
 | Versão nova do processo | `workflow publish <processId> --events a,b` |

@@ -29,6 +29,7 @@ Usar:
 - processo novo a partir de uma descrição;
 - esboço de fluxo para o usuário ajustar no VS Code;
 - ajuste das etapas de um fluxo que ainda não tem dependências (seção "Ajustar o fluxo de um processo que já existe");
+- reconstruir o `.process` de um processo que só existe no servidor (seção "Baixar um processo existente");
 - publicar em teste uma versão gerada.
 
 Não usar:
@@ -203,6 +204,24 @@ Etapa que só é alcançada por prazo (escalonar se não aprovar em N dias): na 
    que usam `WKNumState`/`servicetaskNNN` quebram: **parar e mostrar ao usuário**.
 3. Processo com `.process` no projeto, scripts ou qualquer `ignorados` relevante: não regerar pela spec.
    Editar o `.process` (`fluig-workflow`), `fluig_flow_regenerate` e `fluig_flow_deploy` com `processo`.
+
+## Baixar um processo existente para o projeto (reconstruir o `.process`)
+
+O servidor não guarda o `.process` do Studio; o que ele tem é o `.ecm30.xml` e o SVG publicado
+(`fluig_process_export_xml`, `fluig_process_diagram_get`). Quando o projeto precisa de um `.process`
+editável de um processo que já existe, o caminho é **reconstruir**, e é com perdas:
+
+1. Scripts e formulário pelo fluigcli (skill `fluig-cli`): `workflow import <processId>` e
+   `form import <nome>`. Rodar antes do passo 3: o ECM30 regenerado leva os scripts de `workflow/scripts`.
+2. `fluig_flow_read` (`processId`, `env: "teste"`). Mostrar `ignorados` e `avisos` ao usuário **antes**
+   de gerar: o `.process` reconstruído não terá desenho original (posições vêm do gerador), prazos,
+   raias, campos extras de atividade/ligação nem `I_SERVICO_CONFIG`; isso é ajustado depois no VS Code
+   ou fica de fora. `W_LEITOR_*` = a leitura já não reproduz fielmente; decidir com o usuário se vale.
+3. `fluig_flow_generate` com a `spec` lida, `projeto` (raiz absoluta), `versaoAlvo` e `env`.
+   Conferir a numeração como na seção anterior: cada `ids["s<n>"]` precisa terminar em `<n>`; número
+   diferente quebra `WKNumState`/`servicetaskNNN` dos scripts importados → parar e mostrar.
+4. Não publicar em seguida. O `.process` reconstruído é ponto de partida para edição local; a próxima
+   `fluig_flow_deploy` com `processo` **sobrescreve o desenho do servidor** pelo gerado. Avisar.
 
 ## Como esta skill conversa com as outras
 

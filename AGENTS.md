@@ -25,7 +25,7 @@ Tabela canônica de pedido → skill (o `README.md` repete esta tabela para leit
 | Dataset novo, refatorar ou auditar (inclui dataset de ação `saveAndSendTask`/`startProcess`) | `dataset-fluig` |
 | Form, zoom, pai-filho, anexo | `form-fluig` |
 | Evento de workflow, `displayFields`/`enableFields`/`validateForm`, service task, gateway, `.process` | `fluig-workflow` |
-| Fluxo de processo novo a partir de descrição (spec → .process + ECM30 + SVG pelo mcp-fluig, publicação em teste) | `fluig-fluxo` |
+| Fluxo de processo novo a partir de descrição (spec → .process + ECM30 + SVG pelo mcp-fluig, publicação em teste); reconstruir o `.process` de processo que só existe no servidor (`fluig_flow_read` → `fluig_flow_generate`, com perdas) | `fluig-fluxo` |
 | `beforeSendValidate` / obrigatório | `fluig-validacao` |
 | Widget WCM nova | `fluig-scaffolding-widget` |
 | Layout WCM novo | `fluig-scaffolding-layout` |
