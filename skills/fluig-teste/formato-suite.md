@@ -99,4 +99,15 @@ Uma suíte por processo, versionada no projeto do cliente, em `testes/<processo>
   `naoContem` para a regra testada, em vez de `"espera": "ok"`, quando houver outros obrigatórios.
 - Tarefa de serviço roda em segundo plano (o `request move` volta antes dela terminar): no passo
   que entra nela, use `"aguardar": <segundos>` no `esperado` (também vale em `inicio.esperado`).
+- **Gateway paralelo**: um passo por tarefa aberta, na ordem em que o teste quer concluí-las, cada um
+  com a `etapa` da sua tarefa; até a junção o `esperado` é `{"status": "OPEN"}` (as outras tarefas
+  continuam abertas), e o passo que fecha o último ramo espera a etapa seguinte à junção. O script
+  escolhe a tarefa aberta pela `etapa`, lê o ramo em `HISTOR_PROCES.NUM_SEQ_THREAD` (`task assume
+  --thread`, `threadSequence` do SOAP) e passa `--movement` ao `request move`. Exemplo:
+  ```jsonc
+  { "etapa": 95, "destino": 41, "esperado": { "status": "OPEN" } },   // abre 15 e 44
+  { "etapa": 15, "esperado": { "status": "OPEN" } },
+  { "etapa": 44, "esperado": { "etapa": 64 } }                         // junção → 64
+  ```
+  Com várias tarefas abertas, `etapa` no `esperado` confere se aquela etapa está entre as abertas.
 - Comentários e observações dos testes levam a marca `[TESTE <execucao>]` (o script põe sozinho).

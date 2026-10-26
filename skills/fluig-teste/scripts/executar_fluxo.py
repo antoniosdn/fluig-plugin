@@ -77,9 +77,31 @@ class Fluig:
                 continue
             if not caminho or caminho[-1] != t['sequence']:
                 caminho.append(t['sequence'])
-        etapa = abertas[0] if abertas else (caminho[-1] if caminho else None)
-        return {'status': req.get('status'), 'etapa': etapa, 'caminho': caminho,
-                'formRecordId': req.get('formRecordId')}, None
+        # Gateway paralelo: mais de uma tarefa aberta; "etapa" vira a lista e o passo escolhe a sua
+        etapa = (abertas[0] if len(abertas) == 1 else abertas) if abertas else (caminho[-1] if caminho else None)
+        movimentos = dict((t['sequence'], t.get('movement')) for t in tarefas if t.get('status') == 'NOT_COMPLETED')
+        return {'status': req.get('status'), 'etapa': etapa, 'abertas': abertas, 'movimentos': movimentos,
+                'caminho': caminho, 'formRecordId': req.get('formRecordId')}, None
+
+    def ramo(self, numero, etapa):
+        """Ramo paralelo (threadSequence) da tarefa aberta na etapa: HISTOR_PROCES.NUM_SEQ_THREAD do
+        movimento com tarefa em aberto (TAR_PROCES.IDI_STATUS = 0). 0 no fluxo único ou se a consulta falhar."""
+        rc, d, txt = self.rodar(['db', 'query',
+                                 'SELECT DISTINCT h.NUM_SEQ_THREAD FROM HISTOR_PROCES h JOIN TAR_PROCES t '
+                                 'ON t.COD_EMPRESA = h.COD_EMPRESA AND t.NUM_PROCES = h.NUM_PROCES '
+                                 'AND t.NUM_SEQ_MOVTO = h.NUM_SEQ_MOVTO '
+                                 'WHERE h.NUM_PROCES = %d AND h.NUM_SEQ_ESTADO = %d AND t.IDI_STATUS = 0'
+                                 % (numero, int(etapa))])
+        linhas = ((d or {}).get('data') or {}).get('rows') or []
+        valores = [list(l.values())[0] if isinstance(l, dict) else l[0] for l in linhas]
+        return int(valores[0]) if len(valores) == 1 and valores[0] is not None else 0
+
+
+def tem_etapa(atual, etapa):
+    """A etapa está aberta (ou é a corrente/final) — vale para fluxo único e para ramos paralelos."""
+    if atual is None:
+        return False
+    return etapa in (atual.get('abertas') or []) or atual.get('etapa') == etapa
 
 
 def numero_de(dados, texto):
@@ -111,7 +133,10 @@ def arquivo_campos(campos):
 def conferir(esperado, atual, onde, checks):
     for chave in ('etapa', 'status'):
         if chave in esperado:
-            ok = atual is not None and atual.get(chave) == esperado[chave]
+            if chave == 'etapa':
+                ok = tem_etapa(atual, esperado[chave])
+            else:
+                ok = atual is not None and atual.get(chave) == esperado[chave]
             checks.append({'onde': onde, 'item': chave, 'esperado': esperado[chave],
                            'observado': atual.get(chave) if atual else None, 'ok': ok})
 
@@ -121,7 +146,8 @@ def aguardar(fl, numero, esperado, atual):
     esperado (etapa/status) ou passar esperado["aguardar"] segundos."""
     limite = time.time() + float(esperado.get('aguardar') or 0)
     def bate(a):
-        return a is not None and all(a.get(k) == esperado[k] for k in ('etapa', 'status') if k in esperado)
+        return (a is not None and ('etapa' not in esperado or tem_etapa(a, esperado['etapa']))
+                and ('status' not in esperado or a.get('status') == esperado['status']))
     while not bate(atual) and time.time() < limite:
         time.sleep(3)
         novo, erro = fl.estado(numero)
@@ -130,13 +156,16 @@ def aguardar(fl, numero, esperado, atual):
     return atual
 
 
+# Servidor atrás de proxy/WAF (ex.: acesso só pelo DNS) responde 403 a chamada HTTP sem User-Agent de navegador
+USER_AGENT = 'Mozilla/5.0'
+
 SOAP_SAVE_AND_SEND = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.workflow.ecm.technology.totvs.com/">
 <soapenv:Body><ws:saveAndSendTask>
 <username>%(usuario)s</username><password>%(senha)s</password><companyId>%(empresa)s</companyId>
 <processInstanceId>%(numero)d</processInstanceId><choosedState>%(destino)d</choosedState>
 <colleagueIds/><comments>%(comentario)s</comments><userId>%(userid)s</userId><completeTask>true</completeTask>
 <attachments>%(anexos)s</attachments><cardData>%(campos)s</cardData><appointment/>
-<managerMode>false</managerMode><threadSequence>0</threadSequence>
+<managerMode>false</managerMode><threadSequence>%(ramo)d</threadSequence>
 </ws:saveAndSendTask></soapenv:Body></soapenv:Envelope>"""
 
 
@@ -151,7 +180,7 @@ def destino_unico(fl, numero, etapa):
     return int(valores[0]) if len(valores) == 1 else None
 
 
-def mover_com_anexo(env, numero, destino, campos, anexos, comentario):
+def mover_com_anexo(env, numero, destino, campos, anexos, comentario, ramo=0):
     """Envia a tarefa corrente com anexos pelo SOAP saveAndSendTask (o `request move` não anexa).
     Credenciais do .env da suíte (FLUIG_HOST, FLUIG_USER, FLUIGCLI_PASSWORD/FLUIG_PASS). Devolve (ok, msg)."""
     host = (env.get('FLUIG_HOST') or '').rstrip('/')
@@ -174,9 +203,10 @@ def mover_com_anexo(env, numero, destino, campos, anexos, comentario):
                                   'empresa': escape(env.get('FLUIG_COMPANY') or '1'), 'numero': numero,
                                   'destino': destino, 'comentario': escape(comentario),
                                   'userid': escape(env.get('FLUIG_USER_ID') or usuario),
-                                  'anexos': ''.join(itens), 'campos': cartao}
+                                  'anexos': ''.join(itens), 'campos': cartao, 'ramo': ramo}
     req = urllib.request.Request(host + '/webdesk/ECMWorkflowEngineService', data=corpo.encode('utf-8'),
-                                 headers={'Content-Type': 'text/xml; charset=utf-8', 'SOAPAction': ''})
+                                 headers={'Content-Type': 'text/xml; charset=utf-8', 'SOAPAction': '',
+                                          'User-Agent': USER_AGENT})
     try:
         resp = urllib.request.urlopen(req, timeout=120).read().decode('utf-8', 'replace')
     except Exception as e:  # noqa: BLE001 — a mensagem vai para o relatório (sem a senha)
@@ -226,24 +256,33 @@ def executar_cenario(fl, suite, cen, simular):
 
     for i, p in enumerate(cen.get('passos', []), 1):
         onde = 'passo %d (etapa %s)' % (i, p.get('etapa'))
-        if p.get('etapa') is not None and (atual is None or atual['etapa'] != p['etapa']):
+        if p.get('etapa') is not None and not tem_etapa(atual, p['etapa']):
+            # junção/divisão paralela e atividades automáticas podem levar alguns segundos
+            atual = aguardar(fl, n, {'etapa': p['etapa'], 'aguardar': 15}, atual)
+        if p.get('etapa') is not None and not tem_etapa(atual, p['etapa']):
             r['checks'].append({'onde': onde, 'item': 'etapa antes do passo', 'esperado': p['etapa'],
                                 'observado': atual and atual['etapa'], 'ok': False})
             r['erros'].append('%s: solicitação não está na etapa esperada; passos seguintes não executados' % onde)
             break
-        fl.rodar(['task', 'assume', str(n), '-y'])  # pool: assume; tarefa já sua: o erro é inofensivo
+        etapa = p.get('etapa') if p.get('etapa') is not None else atual['etapa']
+        paralelo = len(atual.get('abertas') or []) > 1
+        ramo = fl.ramo(n, etapa)  # depois da junção o ramo continua diferente de 0
+        # pool: assume; tarefa já sua: o erro é inofensivo
+        fl.rodar(['task', 'assume', str(n), '--thread', str(ramo), '-y'])
         if p.get('anexos'):  # atividade que exige anexo nela mesma: SOAP saveAndSendTask
-            destino = p.get('destino') or destino_unico(fl, n, atual['etapa'])
+            destino = p.get('destino') or destino_unico(fl, n, etapa)
             if not destino:
                 r['erros'].append('%s: etapa com mais de uma saída; informe "destino" no passo com anexos' % onde)
                 break
             ok, msg = mover_com_anexo(fl.env, n, int(destino), p.get('campos'), p['anexos'],
-                                      '%s · passo %d' % (marca, i))
+                                      '%s · passo %d' % (marca, i), ramo)
             if not ok:
                 r['erros'].append('%s: movimento com anexo falhou: %s' % (onde, msg))
                 break
         else:
             args = ['request', 'move', str(n), '--comment', '%s · passo %d' % (marca, i), '-y']
+            if paralelo and atual['movimentos'].get(etapa) is not None:
+                args += ['--movement', str(atual['movimentos'][etapa])]
             if p.get('destino'):
                 args += ['--target-state', str(p['destino'])]
             if p.get('campos'):

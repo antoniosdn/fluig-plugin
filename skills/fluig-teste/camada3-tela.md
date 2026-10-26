@@ -51,25 +51,42 @@ carregado) e deixe no `launch.json` só o `proxy_tela.mjs` (configuração sem o
 Número da solicitação recém-aberta e movimentação atual:
 `fluigcli db query "SELECT TOP 1 p.NUM_PROCES, t.NUM_SEQ_MOVTO FROM PROCES_WORKFLOW p JOIN TAR_PROCES t ON t.NUM_PROCES=p.NUM_PROCES AND t.IDI_STATUS=0 WHERE p.COD_DEF_PROCES='<processId>' ORDER BY p.NUM_PROCES DESC"`.
 Tarefa de pool: `fluigcli task assume <n>` antes de abrir (a movimentação muda: consulte de novo).
+Tarefa de pool **em ramo paralelo** (depois de um gateway paralelo): `fluigcli task assume <n> --thread <ramo>`.
+O ramo está em `HISTOR_PROCES.NUM_SEQ_THREAD` do movimento aberto:
+`fluigcli db query "SELECT h.NUM_SEQ_ESTADO, h.NUM_SEQ_MOVTO, h.NUM_SEQ_THREAD FROM HISTOR_PROCES h JOIN TAR_PROCES t ON t.NUM_PROCES=h.NUM_PROCES AND t.NUM_SEQ_MOVTO=h.NUM_SEQ_MOVTO AND t.IDI_STATUS=0 WHERE h.NUM_PROCES=<n>"`.
+Depois da junção o ramo continua diferente de 0 (na Admissão foi 6): consulte sempre, não presuma 0.
 Tarefa de serviço em segundo plano: espere a etapa seguinte em `TAR_PROCES`/`HISTOR_PROCES`.
 
 ## 3. Como preencher
 
+- **`javascript_tool` na página do portal: nunca declare `var $`** (nem `var jQuery`) no escopo da
+  página. O código roda no escopo global e troca o jQuery do portal; o Enviar passa a mandar
+  `formData` vazio (o servidor cobra todos os campos). Use uma IIFE e o `$` do iframe:
+  `(function () { var w = document.getElementById('workflowView-cardViewer').contentWindow; w.$('#campo').val('x').trigger('change'); })()`.
 - **Digitar e clicar como usuário** em campos de texto e zooms (clique no campo, digite parte do
   texto, escolha o item na lista). O formulário fica num iframe: `find`/`read_page` não entram nele;
   use screenshot e coordenadas, rolando a página.
 - **Select nativo** (a lista do sistema não aparece no navegador do app):
   `document.getElementById('workflowView-cardViewer').contentWindow.$('#campo').val('x').trigger('change')`.
 - **Anexo**: a janela de arquivo do sistema não abre. Na aba Anexos, entregue um arquivo ao campo
-  de envio do portal:
+  de envio do portal. Use um **PDF válido**, de preferência o `testes/anexos/documento-teste.pdf` do
+  projeto: um texto qualquer como `'%PDF-1.4 ...'` é gravado pelo Fluig, mas o anexo não abre. Gere o
+  base64 no terminal (`base64 -i testes/anexos/documento-teste.pdf`) e cole no lugar de `<BASE64>`:
   ```js
-  const f = new File(['%PDF-1.4 ...'], 'recibo-teste.pdf', {type: 'application/pdf'});
-  const dt = new DataTransfer(); dt.items.add(f);
-  const inp = document.getElementById('ecm-navigation-inputFile-clone');
-  inp.files = dt.files; inp.dispatchEvent(new Event('change', {bubbles: true}));
+  (function () {
+    var b = atob('<BASE64>'), u = new Uint8Array(b.length);
+    for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i);
+    var f = new File([u], 'documento-teste.pdf', {type: 'application/pdf'});
+    var dt = new DataTransfer(); dt.items.add(f);
+    var inp = document.getElementById('ecm-navigation-inputFile-clone');
+    inp.files = dt.files; inp.dispatchEvent(new Event('change', {bubbles: true}));
+  })();
   ```
-  O anexo entra na atividade corrente (confira com `fluigcli request attachments <n>`).
+  Antes de anexar, feche o aviso **"Status do Servidor"** se ele aparecer: aberto, ele impede o
+  upload. O anexo entra na atividade corrente (confira com `fluigcli request attachments <n>`).
 - **Enviar** pelo botão Enviar da página.
+- **Sessão do `fluigcli dev` expirada** (o preview cai na tela de login do Fluig): reinicie o preview
+  (`preview_stop` e `preview_start`, ou o `fluigcli dev` no terminal, se for ele que está rodando).
 - Máscaras (jQuery Mask) podem não formatar o que a ferramenta digita: não é defeito do formulário
   se `$('#campo').data('mask')` existe.
 
