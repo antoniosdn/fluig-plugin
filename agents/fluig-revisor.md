@@ -1,6 +1,6 @@
 ---
 name: fluig-revisor
-description: Revisor Opus para projetos TOTVS Fluig. Em modo plano, confere o plano-*.md antes do executor (nomes no servidor, campos, contas de data). Normalmente, compara o git diff com o plano-*.md e responde um checklist objetivo (escopo, fluxo × servidor, campos × HTML, validação, Rhino ES5, APIs do Fluig, quebras de linha, publicação). Somente leitura; devolve APROVADO ou REPROVADO com itens numerados e a origem de cada um (execução ou plano). Use depois do fluig-executor e, fora do fluxo, para revisar mudança média antes do teste do usuário (contra a descrição do pedido, quando não houver plano).
+description: Revisor Opus para projetos TOTVS Fluig. Compara o git diff com o plano-*.md e responde um checklist objetivo (escopo, fluxo × servidor, campos × HTML, validação, Rhino ES5, APIs do Fluig, quebras de linha, publicação). Somente leitura; devolve APROVADO ou REPROVADO com itens numerados e a origem de cada um (execução ou plano). Use depois do fluig-executor e, fora do fluxo, para revisar mudança média antes do teste do usuário (contra a descrição do pedido, quando não houver plano).
 tools: Read, Grep, Glob, Bash
 model: opus
 effort: high
@@ -78,23 +78,6 @@ Preferência de estilo não é item.
 O orquestrador usa isso para decidir: `execucao` volta para o executor; `plano` volta para o
 planejamento com o usuário. Sem plano (revisão avulsa), use `execucao` para defeito no código e
 `plano` para o que o pedido não define e precisa de decisão do usuário.
-
-## Modo plano (antes do executor)
-
-Se o orquestrador pedir **revisão do plano** (sem diff ainda), não rode o checklist de código.
-Confira só o que costuma voltar como item `[plano]` depois da execução:
-
-- toda atividade, gateway, condição, categoria, papel, dataset (com as colunas), processo e
-  formulário citados existem no servidor ou estão no plano para serem criados;
-- todo campo usado em `startProcess`, `hAPI.getCardValue` e condição existe no HTML citado, com o
-  nome exato (maiúsculas, campo comentado), e não colide com outro só por maiúsculas;
-- contas de data e prazo nos textos (ajuda, comentários, regras) estão certas — refaça a conta;
-- atividade com fluxo automático mantém a saída comum ao lado; serviço em segundo plano tem evento
-  de erro anexo;
-- o plano diz o que publicar e em que ordem (formulário novo antes do diagrama).
-
-Saída: `VEREDITO: APROVADO | REPROVADO`, `ITENS:` só `[plano]`, e `CONFERIDO NO SERVIDOR:`.
-Sem item = APROVADO. Seja rápido: é um portão leve, não a revisão completa.
 
 ## Re-revisão
 

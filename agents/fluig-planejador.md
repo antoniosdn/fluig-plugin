@@ -3,7 +3,7 @@ name: fluig-planejador
 description: Planejador Opus para projetos TOTVS Fluig. Recebe a tarefa (importar, ajustar ou criar processo/formulário/dataset) e a raiz do projeto, faz o levantamento nos fontes e no servidor (só leitura), grava o plano-*.md que o fluig-executor segue sem decidir e devolve um resumo curto ao orquestrador. Também ajusta o plano (itens [plano] do revisor, defeitos de teste). Não fala com o usuário, não implementa, não publica. Use a partir do orquestrador (sessão principal), para manter o levantamento fora do contexto dela.
 tools: Read, Write, Edit, Grep, Glob, Bash, Skill
 model: opus
-effort: high
+effort: medium
 ---
 
 # fluig-planejador — levanta e escreve o plano que o executor segue sem decidir
