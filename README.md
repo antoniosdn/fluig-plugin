@@ -112,7 +112,13 @@ Para mudança em vários arquivos, versão nova de processo ou qualquer coisa co
    e grava o `plano-<descricao>.md` na raiz, sem ocupar o contexto da sessão principal. Regra de
    cliente: devolve as dúvidas (`perguntar`) ou aplica a sugestão (`aplicar-sugestoes`, quando o
    projeto define).
-2. **Executar** com o agente `fluig-executor`, que recebe só o caminho do plano. Implementa e
+2. **Executar** com dois agentes em paralelo, cada um com o caminho do plano. O planejador marca
+   cada step: `[escritor]` vai para o `fluig-escritor` (Haiku) — formulário (HTML, `custom.js`,
+   `custom_valida.js`, `zoom.js`, `ajuda_config.js`, eventos do form) e cópias idênticas, quando o
+   plano traz tudo e não há decisão; `[executor]` vai para o `fluig-executor` (Sonnet). Step do
+   executor que depende do formulário (publicar) leva `(depois do escritor)`: o executor devolve
+   `AGUARDANDO_ESCRITOR` e é retomado com `SendMessage` quando o escritor termina, recebendo junto
+   os steps que o escritor devolveu pendentes. O `fluig-executor` implementa e
    publica com fluigcli quando o plano manda. Versão de processo: o executor edita o `.process` e
    regenera ECM30 + SVG com `fluig-mcp regenerar` (informar `FLUIG_MCP_DIR`); quem publica é a
    sessão principal, com `fluig_flow_deploy` e autorização do usuário.
@@ -232,7 +238,7 @@ de papéis e campos.
 | Pasta | Conteúdo |
 |---|---|
 | `skills/` | 21 skills (tabela acima) e seus scripts: `fluig-teste/scripts/` (`executar_fluxo.py`, `testar_formulario.py`, `proxy_tela.mjs`), `fluig-workflow/scripts/verificar_process.py` e `fluig-preparar/scripts/conferir_ambiente.py` |
-| `agents/` | `fluig-executor` (Sonnet), `fluig-revisor` (Opus), `fluig-test-runner` (Sonnet), `fluig-test-auditor` (Opus) |
+| `agents/` | `fluig-planejador` (Opus), `fluig-escritor` (Haiku), `fluig-executor` (Sonnet), `fluig-revisor` (Opus), `fluig-test-runner` (Sonnet), `fluig-test-auditor` (Opus) |
 | `context/` | Arquitetura, convenções, tecnologias e Style Guide do Fluig, lidos pelas skills de frontend (widget, layout, formulário HTML); não servem a datasets nem a scripts de workflow |
 | `examples/` | Widget e layout WCM mínimos |
 | `rules/` | `fluig-rhino-es5.md`: referência das regras ECMA 5 / Rhino (datasets, scripts de workflow, `displayFields.js`) |

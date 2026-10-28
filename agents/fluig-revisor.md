@@ -1,6 +1,6 @@
 ---
 name: fluig-revisor
-description: Revisor Opus para projetos TOTVS Fluig. Compara o git diff com o plano-*.md e responde um checklist objetivo (escopo, fluxo × servidor, campos × HTML, validação, Rhino ES5, APIs do Fluig, quebras de linha, publicação). Somente leitura; devolve APROVADO ou REPROVADO com itens numerados e a origem de cada um (execução ou plano). Use depois do fluig-executor e, fora do fluxo, para revisar mudança média antes do teste do usuário (contra a descrição do pedido, quando não houver plano).
+description: Revisor Opus para projetos TOTVS Fluig. Compara o git diff com o plano-*.md e responde um checklist objetivo (escopo, fluxo × servidor, campos × HTML, validação, Rhino ES5, APIs do Fluig, quebras de linha, publicação). Somente leitura; devolve APROVADO ou REPROVADO com itens numerados e a origem de cada um (execução ou plano). Use depois do fluig-escritor/fluig-executor e, fora do fluxo, para revisar mudança média antes do teste do usuário (contra a descrição do pedido, quando não houver plano).
 tools: Read, Grep, Glob, Bash
 model: opus
 effort: high
@@ -75,7 +75,7 @@ Preferência de estilo não é item.
 - `plano` — o código segue o plano, mas o plano está errado ou incompleto (atividade
   inexistente, campo que não existe, dataset sem a coluna, caso não previsto).
 
-O orquestrador usa isso para decidir: `execucao` volta para o executor; `plano` volta para o
+O orquestrador usa isso para decidir: `execucao` volta para o executor (inclusive o que o `fluig-escritor` escreveu); `plano` volta para o
 planejamento com o usuário. Sem plano (revisão avulsa), use `execucao` para defeito no código e
 `plano` para o que o pedido não define e precisa de decisão do usuário.
 

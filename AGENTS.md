@@ -45,6 +45,7 @@ Tabela canônica de pedido → skill (o `README.md` repete esta tabela para leit
 | Agente | Modelo | Papel |
 |---|---|---|
 | `fluig-planejador` | Opus medium | Levanta (fontes e servidor, só leitura) e grava o `plano-*.md`; devolve resumo curto ao orquestrador. Modo `aplicar-sugestoes` ou `perguntar` para regra de cliente |
+| `fluig-escritor` | Haiku | Escreve só os steps `[escritor]` do plano (formulário — HTML, JS de form, ajuda, eventos do form — e cópias idênticas), quando o plano traz tudo; não publica. Roda em paralelo com o executor |
 | `fluig-executor` | Sonnet medium | Implementa um `plano-*.md` aprovado; publica com fluigcli só quando o plano manda. Versão de processo: edita o `.process`, regenera ECM30 + SVG com `fluig-mcp regenerar` e deixa a publicação para `fluig_flow_deploy` na sessão principal |
 | `fluig-revisor` | Opus high | Revisa o `git diff` contra o plano e o servidor (só leitura) |
 | `fluig-test-runner` | Sonnet medium | Roda a suíte `testes/<processo>.json` aprovada (orquestrador `fluig-teste`) |
@@ -52,7 +53,7 @@ Tabela canônica de pedido → skill (o `README.md` repete esta tabela para leit
 
 Fluxo para mudança média ou grande (vários arquivos, risco Rhino, versão de processo): `fluig-planejador`
 (`plano-<descricao>.md`; aprovação do usuário, salvo projeto que define `aplicar-sugestoes`) →
-`fluig-executor` → `fluig-revisor`
+`fluig-escritor` (steps `[escritor]`) em paralelo com `fluig-executor` (steps `[executor]`) → `fluig-revisor`
 → no máximo uma rodada de correção → regressão com `fluig-teste`.
 
 Não usar scaffold oficial TOTVS de form ou dataset. Query Store, se o cliente
