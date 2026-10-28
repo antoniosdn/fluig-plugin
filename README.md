@@ -108,8 +108,10 @@ esta é uma cópia para consulta.
 
 Para mudança em vários arquivos, versão nova de processo ou qualquer coisa com risco no Rhino:
 
-1. **Planejar** na sessão principal, com o usuário. O plano vira um `plano-<descricao>.md` na
-   raiz do projeto e só segue com aprovação.
+1. **Planejar** com o agente `fluig-planejador` (Opus high), que levanta nos fontes e no servidor
+   e grava o `plano-<descricao>.md` na raiz, sem ocupar o contexto da sessão principal. Regra de
+   cliente: devolve as dúvidas (`perguntar`) ou aplica a sugestão (`aplicar-sugestoes`, quando o
+   projeto define). Depois, o `fluig-revisor` em **modo plano** confere o plano antes da execução.
 2. **Executar** com o agente `fluig-executor`, que recebe só o caminho do plano. Implementa e
    publica com fluigcli quando o plano manda. Versão de processo: o executor edita o `.process` e
    regenera ECM30 + SVG com `fluig-mcp regenerar` (informar `FLUIG_MCP_DIR`); quem publica é a
