@@ -69,6 +69,10 @@ Passar: suíte, arquivos de resultado, lista de solicitações criadas. Ele conf
 leitura), separa **defeito do processo** de **defeito do teste** (suíte errada, dado de teste
 incompleto) e, para cada defeito do processo, escreve um rascunho de plano de correção.
 
+Runner ou auditor que deu erro, estourou o tempo ou voltou sem relatório **não rodou**: chame de
+novo uma vez; se falhar de novo, a camada (ou a auditoria) entra no relatório como "não rodou".
+Nunca conte como zero falhas.
+
 ### 4. Relatar ao usuário
 Na resposta, curto:
 - placar por camada e tabela cenário → solicitação → resultado;

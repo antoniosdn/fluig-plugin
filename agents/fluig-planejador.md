@@ -43,6 +43,10 @@ tipo de tarefa (ex.: no demo da Ascendra, `demo-processo` e as referências `imp
   campos, maiúsculas/minúsculas, campos comentados).
 - Formulário: `name`/`id` repetidos (inclusive só por maiúsculas — o servidor recusa), scripts
   carregados de caminho errado, recursos externos, datas fora de `aaaa-mm-dd`.
+- **O que já existe:** antes de planejar dataset, mecanismo, widget, script de evento ou campo
+  novo, procure um equivalente no projeto (`datasets/`, `forms/`, `wcm/`, `mechanisms/`) e no que
+  o servidor mostrou. Achou: o plano reaproveita e diz qual. Criar mesmo assim: diga em uma linha
+  por que o existente não serve.
 
 ## Plano
 
@@ -50,6 +54,9 @@ Grave `<raiz>/plano-<descricao>.md`, autossuficiente para um executor que não d
 atividades com id, tipo, atribuição, prazo e fluxos; campos com nome exato; scripts com o que
 leem e gravam; o que publicar e em que ordem; suíte de testes (cenários por fim e desvio).
 
+- **Arquivos:** cada step lista os arquivos que toca, cada um marcado `Criar`, `Modificar` ou
+  `Excluir`, com o caminho a partir da raiz. O revisor usa a marcação: arquivo `Criar` que ainda
+  não existe não é defeito, e `Modificar` em arquivo que não existe é.
 - **Decisões de regra específica de cliente:** tabela regra → onde → o que faz → sugestão → decisão.
   Em `aplicar-sugestoes`, a decisão é a sugestão (`sugestão aplicada`); escopo que muda outro
   processo **não entra** (vai em FORA DO ESCOPO). Em `perguntar`, deixe a decisão em aberto e

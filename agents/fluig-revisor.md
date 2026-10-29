@@ -28,9 +28,16 @@ a senha. Nunca rode `export`, `publish`, `delete`, `enable`/`disable` nem `conve
 Leia o plano. Obtenha o diff de cada arquivo (`git diff -- <arquivo>`; arquivo novo: leia
 inteiro). Não leia o histórico da execução — só plano, diff e o que precisar para conferir.
 
+## Paráfrase primeiro
+
+Antes do checklist, escreva com suas palavras, em 2 a 3 linhas cada, **o que o plano pede** e
+**o que o diff faz**. Se as duas não batem, isso já é item de escopo. Se você não consegue
+parafrasear um step do plano (ambíguo, depende de algo que o plano não diz), é item `[plano]`.
+
 ## Checklist — responda todos os itens
 
-1. **Escopo:** cada step do plano está implementado? Há mudança fora do que o plano pede?
+1. **Escopo:** cada step do plano está implementado? Há mudança fora do que o plano pede? Cada
+   arquivo do diff bate com a marcação `Criar`/`Modificar`/`Excluir` do plano?
 2. **Fluxo × servidor:** todo número de atividade, gateway ou condição usado no código existe
    na versão do processo no servidor e significa o que o código supõe
    (`processState`, `LINK_PROCES`, `ESTADO_PROCES_COND`). Confira inclusive o que o plano diz —
@@ -88,6 +95,8 @@ linhas tocadas pela correção (regressão). Não reabra o que já estava aprova
 
 ```
 VEREDITO: APROVADO | REPROVADO
+PLANO PEDE: <2 a 3 linhas>
+DIFF FAZ: <2 a 3 linhas>
 CHECKLIST: escopo OK|X · fluxo OK|X · campos OK|X · validacao OK|X · rhino OK|X · linhas OK|X · publicacao OK|X|NA · diagrama OK|X|NA · fluxo-spec OK|X|NA
 ITENS:
 1. [execucao|plano] <arquivo>:<linha> — <defeito> — <correção esperada>

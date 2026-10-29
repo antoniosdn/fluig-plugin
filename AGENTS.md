@@ -56,6 +56,10 @@ Fluxo para mudança média ou grande (vários arquivos, risco Rhino, versão de 
 `fluig-escritor` (steps `[escritor]`) em paralelo com `fluig-executor` (steps `[executor]`) → `fluig-revisor`
 → no máximo uma rodada de correção → regressão com `fluig-teste`.
 
+Subagente que deu erro, estourou o tempo ou voltou sem o bloco de saída do agente (`VEREDITO`,
+`STATUS`) **não rodou**: chamar de novo uma vez; se falhar de novo, dizer ao usuário que aquela
+etapa não rodou. Nunca contar como `APROVADO` nem como zero falhas.
+
 Não usar scaffold oficial TOTVS de form ou dataset. Query Store, se o cliente
 tiver, está no `AGENTS.md` do projeto — não inventar endpoint.
 
