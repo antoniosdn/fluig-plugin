@@ -30,8 +30,12 @@ Fronteira: pedido só de evidência de teste manual pela interface, para aceite 
   servidor e roda sempre.
 - **Teste não corrige.** Nenhum agente deste fluxo publica, altera formulário, script ou dataset.
   Defeito vira item do relatório e proposta de correção.
-- **Solicitações de teste ficam.** Não cancelar nem apagar sem o usuário pedir; listar no
-  relatório as que ficaram abertas.
+- **Solicitações de teste ficam, mas não esquecidas.** Não cancelar nem apagar sem o usuário pedir.
+  Toda solicitação da rodada que terminar aberta precisa de justificativa (cenário que para ali por
+  desenho, continuação manual prevista na suíte) ou de encerramento pelo caminho que a suíte prevê
+  (`continuacoes`, `depoisDaRodada`); cancelamento só com o usuário.
+- **Nada vivo no fim.** Nenhum laço ou processo da rodada continua rodando depois do relatório
+  (ver "Acompanhar a rodada").
 
 ## Fluxo
 
@@ -63,6 +67,30 @@ ferramenta (máscara, select nativo) não.
 **Depois: camadas 1 e 2 (subagente `fluig-test-runner`).** Passar: caminho da suíte, camadas (1, 2),
 cenários aprovados, pasta de saída (`testes/resultados/`). O runner devolve um relatório curto e
 os arquivos de resultado. A camada 1 cobre os desvios e os outros fins; a 2, as regras de tela.
+Preparo que precisa rodar em paralelo à camada 1 (aprovar pedido, retomar tarefa) vai no
+`antesDaRodada` da suíte com `"fundo": true` (o script encerra pelo PID); não suba laço à parte.
+
+#### Acompanhar a rodada (sessão principal, enquanto o runner roda a camada 1)
+Antes de chamar o runner, anote a última solicitação do servidor
+(`fluigcli db query "SELECT MAX(NUM_PROCES) FROM PROCES_WORKFLOW"`): a rodada cria daí em diante.
+Chame o runner em segundo plano e, **a cada ~5 min** até ele voltar (use `ScheduleWakeup`/`Monitor`
+com condição que termina — nunca laço `until ... pgrep -f`), consulte as solicitações da faixa:
+
+```bash
+# abertas da faixa: etapa e desde quando estão nela (STATUS 0 = aberta; TAR_PROCES.IDI_STATUS 0 = tarefa pendente)
+fluigcli db query "SELECT DISTINCT w.NUM_PROCES, h.NUM_SEQ_ESTADO, h.MOVTO_DATE_TIME FROM PROCES_WORKFLOW w JOIN TAR_PROCES t ON t.COD_EMPRESA=w.COD_EMPRESA AND t.NUM_PROCES=w.NUM_PROCES AND t.IDI_STATUS=0 JOIN HISTOR_PROCES h ON h.COD_EMPRESA=t.COD_EMPRESA AND h.NUM_PROCES=t.NUM_PROCES AND h.NUM_SEQ_MOVTO=t.NUM_SEQ_MOVTO WHERE w.STATUS=0 AND w.NUM_PROCES > <ultima> AND w.COD_DEF_PROCES='<processo>' ORDER BY w.NUM_PROCES" --json
+```
+
+- Solicitação **na mesma etapa por mais de 5 min** sem ser espera prevista (tarefa de serviço com
+  `aguardar`, continuação manual): investigue na hora — `request show`, histórico, log do servidor,
+  o gancho `antesDaRodada` (log em `testes/resultados/gancho-*.log`) — sem esperar o tempo limite do
+  runner. Defeito de preparo (pedido não aprovado, gateway que devolveu) pode ser corrigido pelo
+  comando que a suíte prevê; defeito do processo vai para o relatório.
+- **Ao fim da rodada:** liste as solicitações abertas da faixa (a mesma consulta, ou o `abertas` do
+  resultado) e, para cada uma, justifique (para ali por desenho, segue em `continuacoes`) ou leve ao
+  fim pelo caminho que a suíte prevê. Cancelar só com o usuário.
+- **Nada vivo:** `ps -o pid,etime,command -u "$USER" | grep -E 'executar_fluxo|_preparo|fluigcli|pgrep' | grep -v grep`;
+  processo desta rodada que sobrou → `kill <pid>`. Encerre também os `Monitor`/`ScheduleWakeup` que criou.
 
 ### 3. Auditar (subagente `fluig-test-auditor`)
 Passar: suíte, arquivos de resultado, lista de solicitações criadas. Ele confere no servidor (só
@@ -77,7 +105,7 @@ Nunca conte como zero falhas.
 Na resposta, curto:
 - placar por camada e tabela cenário → solicitação → resultado;
 - defeitos do processo (com o rascunho de correção) e defeitos do teste (o que ajustar na suíte);
-- solicitações que ficaram abertas;
+- solicitações que ficaram abertas, cada uma com a etapa e a justificativa (ou o que foi feito);
 - bloco "Evidência para GMUD" (ambiente, data, cenários com resultado, caminho dos resultados) só
   quando o usuário pedir; por padrão não se gera evidência nem print no projeto.
 
@@ -95,4 +123,6 @@ python3 <dir desta skill>/scripts/testar_formulario.py testes/<p>.json --saida t
 
 Armadilhas já conhecidas: tarefa de pool precisa de `fluigcli task assume` antes do
 `request move` (o script já faz); aprovação sem gateway exige `destino`; campos de
-zoom/autocomplete não existem no headless.
+zoom/autocomplete não existem no headless; `CAST(... AS VARCHAR)` não existe no MySQL do Fluig
+(histórico: ler `OBSERVATION` sem CAST, ou `CAST(... AS CHAR(2000))`); `pgrep -f <padrão>` em laço
+casa com o próprio laço e nunca termina — espere pelo PID.

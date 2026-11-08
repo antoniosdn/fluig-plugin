@@ -14,6 +14,22 @@ Uma suíte por processo, versionada no projeto do cliente, em `testes/<processo>
   "camposBase": { "campo": "valor", "filho___1": "valor" },  // campos comuns a todos os cenários
   "anexos": ["testes/anexos/documento-teste.pdf"],           // opcional: anexados no início (também por cenário)
 
+  "antesDaRodada": [                  // opcional: roda antes do 1º cenário da camada 1 (o script executa)
+    { "descricao": "aprova os pedidos da faixa da rodada e retoma a tarefa 5",
+      "comando": "~/.protheus/venv-mssql/bin/python testes/x_preparo.py aprovar {ultima} 90",
+      "fundo": true,                  // em paralelo; o script guarda o PID e ENCERRA o grupo no fim (TERM → KILL)
+      "esperarInicio": 2 }            // segundos antes do 1º cenário (padrão 2)
+  ],
+  "depoisDaRodada": [                 // opcional: roda depois do último cenário; código ≠ 0 → saída 1 e aviso
+    { "descricao": "lista as solicitações da faixa ainda abertas",
+      "comando": "~/.protheus/venv-mssql/bin/python testes/x_preparo.py pendentes {ultima}",
+      "tempoLimite": 120 }            // segundos (padrão 300; vale também para antesDaRodada sem "fundo")
+  ],
+  //   comando: texto (bash -c) ou lista; roda na raiz do projeto com as variáveis do .env da suíte.
+  //   {ultima} = maior NUM_PROCES antes da rodada (a rodada cria de {ultima}+1 em diante);
+  //   {execucao} = id da rodada; {solicitacoes} = números criados (só no depoisDaRodada).
+  //   antesDaRodada sem "fundo" que termina com código ≠ 0 aborta a rodada. --sem-ganchos pula os dois.
+
   "tela": {                           // CAMADA 3 — caminho feliz pela tela (roteiro: camada3-tela.md)
     "descricao": "prestador já cadastrado, aprovado, até a conclusão",
     "passos": [                        // o que preencher/conferir em cada etapa, para a sessão principal seguir
@@ -111,3 +127,11 @@ Uma suíte por processo, versionada no projeto do cliente, em `testes/<processo>
   ```
   Com várias tarefas abertas, `etapa` no `esperado` confere se aquela etapa está entre as abertas.
 - Comentários e observações dos testes levam a marca `[TESTE <execucao>]` (o script põe sozinho).
+- **Nada fica parado nem vivo.** Preparo que precisa acontecer *durante* a rodada (aprovar pedido,
+  retomar tarefa devolvida) vai em `antesDaRodada` com `"fundo": true`, nunca num laço solto no
+  terminal: o script encerra o processo pelo PID no fim. Conferência de pendências do projeto vai em
+  `depoisDaRodada`. O próprio script lista no fim (`abertas` no resultado) as solicitações da rodada
+  que continuam abertas e a etapa de cada uma; cenário que termina aberto por desenho diz isso na
+  `descricao` (ex.: "vai até a 119; segue em continuacoes").
+- Resultado: `testes/resultados/fluxo-<processo>-<AAAAMMDD-HHMMSS>[-<cenários>].json` — rodadas no
+  mesmo minuto não se sobrescrevem.

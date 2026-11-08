@@ -5,14 +5,22 @@ pela API do fluigcli (request start / task assume / request move / request show)
 etapa, status, caminho, histórico e campos gravados.
 
 Uso:
-  python3 executar_fluxo.py <suite.json> [--cenario ID ...] [--saida DIR] [--simular]
+  python3 executar_fluxo.py <suite.json> [--cenario ID ...] [--saida DIR] [--simular] [--sem-ganchos]
 
-  --simular   só mostra o que seria feito (não cria nem movimenta solicitação)
+  --simular      só mostra o que seria feito (não cria nem movimenta solicitação)
+  --sem-ganchos  não roda os blocos "antesDaRodada" / "depoisDaRodada" da suíte
+
+Ganchos da rodada (formato-suite.md): "antesDaRodada" roda antes do primeiro cenário (com "fundo":
+true fica em paralelo e é ENCERRADO pelo próprio script no fim, mesmo com erro ou Ctrl-C);
+"depoisDaRodada" roda depois do último. No fim o script lista as solicitações da rodada que
+ficaram abertas e a etapa de cada uma.
 
 Credenciais: o arquivo .env indicado em suite["servidor"]["env"] (relativo à raiz do projeto,
 onde a suíte é rodada) é carregado no ambiente do fluigcli. A senha nunca é impressa.
 Formato da suíte: formato-suite.md, ao lado da skill fluig-teste
-Saída: <saida>/fluxo.json e código de saída 0 (tudo passou), 1 (falhou algo), 2 (erro de uso).
+Saída: <saida>/fluxo-<processo>-<AAAAMMDD-HHMMSS>[-<cenário>].json e código de saída 0 (tudo
+passou), 1 (falhou algo), 2 (erro de uso). A saída padrão sai linha a linha (flush), mesmo com
+pipe/tee: a linha "solicitação N criada" aparece na hora, para quem acompanha a rodada.
 """
 import json
 import os
@@ -22,8 +30,26 @@ import subprocess
 import urllib.request
 from xml.sax.saxutils import escape
 import sys
+import shlex
+import signal
 import tempfile
 import time
+
+# Saída linha a linha também com pipe/tee (sem isso a linha "solicitação N criada" só chega no fim)
+try:
+    sys.stdout.reconfigure(line_buffering=True)
+    sys.stderr.reconfigure(line_buffering=True)
+except AttributeError:  # Python < 3.7
+    pass
+
+# Histórico: a coluna OBSERVATION é texto longo (LONGTEXT no MySQL, text/nvarchar(max) no SQL Server,
+# CLOB no Oracle). Tenta sem CAST (funciona em MySQL e SQL Server) e cai para o CAST de cada banco.
+SQL_HISTORICO = [
+    'SELECT NUM_SEQ, OBSERVATION OBS FROM PROCESS_OBSERVATION WHERE NUM_PROCESS=%d ORDER BY OBSERVATION_ID',
+    'SELECT NUM_SEQ, CAST(OBSERVATION AS CHAR(2000)) OBS FROM PROCESS_OBSERVATION WHERE NUM_PROCESS=%d ORDER BY OBSERVATION_ID',
+    'SELECT NUM_SEQ, CAST(OBSERVATION AS VARCHAR(2000)) OBS FROM PROCESS_OBSERVATION WHERE NUM_PROCESS=%d ORDER BY OBSERVATION_ID',
+    'SELECT NUM_SEQ, DBMS_LOB.SUBSTR(OBSERVATION, 2000, 1) OBS FROM PROCESS_OBSERVATION WHERE NUM_PROCESS=%d ORDER BY OBSERVATION_ID',
+]
 
 
 def carregar_env(caminho):
@@ -217,6 +243,20 @@ def mover_com_anexo(env, numero, destino, campos, anexos, comentario, ramo=0):
     return True, ''
 
 
+def historico(fl, numero):
+    """Linhas {NUM_SEQ, OBS} do histórico da solicitação. Devolve (linhas, None) ou (None, erro)."""
+    ultimo = ''
+    for sql in SQL_HISTORICO:
+        rc, d, txt = fl.rodar(['db', 'query', sql % numero])
+        if d and d.get('ok'):
+            dados_q = d.get('data') or {}
+            colunas = [c.get('name') if isinstance(c, dict) else c
+                       for c in (dados_q.get('columns') or ['NUM_SEQ', 'OBS'])]
+            return [l if isinstance(l, dict) else dict(zip(colunas, l)) for l in dados_q.get('rows', [])], None
+        ultimo = ((d or {}).get('error') or {}).get('message') or txt[-300:]
+    return None, ultimo[:300]
+
+
 def executar_cenario(fl, suite, cen, simular):
     proc = suite['processo']
     marca = '[TESTE %s] %s' % (suite.get('execucao', ''), cen['id'])
@@ -309,13 +349,12 @@ def executar_cenario(fl, suite, cen, simular):
             r['checks'].append({'onde': 'final', 'item': 'não passa por %s' % s, 'esperado': False,
                                 'observado': s in atual['caminho'], 'ok': s not in atual['caminho']})
     if v.get('historico'):
-        rc, d, txt = fl.rodar(['db', 'query',
-                               'SELECT NUM_SEQ, CAST(OBSERVATION AS VARCHAR(2000)) OBS FROM PROCESS_OBSERVATION '
-                               'WHERE NUM_PROCESS=%d ORDER BY OBSERVATION_ID' % n])
-        dados_q = (d or {}).get('data') or {}
-        colunas = [c.get('name') if isinstance(c, dict) else c for c in (dados_q.get('columns') or ['NUM_SEQ', 'OBS'])]
-        linhas = [l if isinstance(l, dict) else dict(zip(colunas, l)) for l in dados_q.get('rows', [])]
-        for h in v['historico']:
+        linhas, erro_q = historico(fl, n)
+        if erro_q:
+            # consulta que falha não reprova em silêncio: vira erro do cenário (bloqueia os checks de histórico)
+            r['erros'].append('histórico: consulta ao PROCESS_OBSERVATION falhou, checks de histórico não '
+                              'conferidos: %s' % erro_q)
+        for h in (v['historico'] if not erro_q else []):
             achou = [l for l in linhas
                      if ('etapa' not in h or str(l.get('NUM_SEQ')) == str(h['etapa']))
                      and h['contem'] in re.sub(r'<[^>]+>', '', str(l.get('OBS', '')))]
@@ -341,13 +380,61 @@ def executar_cenario(fl, suite, cen, simular):
     return r
 
 
+def ultima_solicitacao(fl):
+    """Maior número de solicitação no servidor antes da rodada (a rodada cria de ultima+1 em diante)."""
+    rc, d, txt = fl.rodar(['db', 'query', 'SELECT MAX(NUM_PROCES) ULTIMA FROM PROCES_WORKFLOW'])
+    linhas = ((d or {}).get('data') or {}).get('rows') or []
+    if not linhas:
+        return None
+    v = list(linhas[0].values())[0] if isinstance(linhas[0], dict) else linhas[0][0]
+    return int(v) if v is not None else None
+
+
+def montar_comando(gancho, valores):
+    """Comando do gancho com {ultima}, {execucao}, {solicitacoes} substituídos (só números/ids)."""
+    cmd = gancho['comando']
+    if isinstance(cmd, list):
+        cmd = ' '.join(c if c.startswith('~') else shlex.quote(c) for c in cmd)
+    for k, v in valores.items():
+        cmd = cmd.replace('{%s}' % k, str(v))
+    return cmd
+
+
+def iniciar_fundo(gancho, cmd, env, saida, execucao, i):
+    """Gancho em paralelo: grupo de processos próprio, saída em arquivo; o PID volta para encerrar no fim."""
+    os.makedirs(saida, exist_ok=True)
+    log = os.path.join(saida, 'gancho-%s-antes%d.log' % (execucao, i))
+    f = open(log, 'w', encoding='utf-8')
+    p = subprocess.Popen(['/bin/bash', '-c', cmd], env=env, stdout=f, stderr=subprocess.STDOUT,
+                         start_new_session=True)
+    print('  antesDaRodada %d em paralelo (PID %d, log %s): %s' % (i, p.pid, log, gancho.get('descricao', cmd)))
+    return {'proc': p, 'arquivo': f, 'log': log, 'descricao': gancho.get('descricao', cmd)}
+
+
+def encerrar_fundo(fundos):
+    """Encerra os ganchos em paralelo pelo PID do grupo (nunca por pgrep/padrão): TERM, 10 s, KILL."""
+    for g in fundos:
+        p = g['proc']
+        if p.poll() is None:
+            try:
+                os.killpg(p.pid, signal.SIGTERM)
+                p.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                os.killpg(p.pid, signal.SIGKILL)
+                p.wait(timeout=10)
+            except ProcessLookupError:
+                pass
+        g['arquivo'].close()
+        print('  antesDaRodada encerrado (PID %d, código %s): %s' % (p.pid, p.returncode, g['descricao']))
+
+
 def main():
     args = sys.argv[1:]
     if not args or args[0].startswith('-'):
         print(__doc__)
         return 2
     caminho = args[0]
-    filtro, saida, simular = [], 'testes/resultados', False
+    filtro, saida, simular, ganchos = [], 'testes/resultados', False, True
     i = 1
     while i < len(args):
         if args[i] == '--cenario':
@@ -356,10 +443,13 @@ def main():
             saida = args[i + 1]; i += 2
         elif args[i] == '--simular':
             simular = True; i += 1
+        elif args[i] == '--sem-ganchos':
+            ganchos = False; i += 1
         else:
             print('opção desconhecida: ' + args[i]); return 2
     suite = json.load(open(caminho, encoding='utf-8'))
-    suite.setdefault('execucao', time.strftime('%Y%m%d-%H%M'))
+    # até o segundo: rodadas (ou cenários rodados um a um) no mesmo minuto não se sobrescrevem
+    suite.setdefault('execucao', time.strftime('%Y%m%d-%H%M%S'))
     srv = suite.get('servidor', {})
     fl = Fluig(carregar_env(srv.get('env')), srv.get('nome'))
 
@@ -377,30 +467,105 @@ def main():
         print('servidor %s (%s) — ambiente não produtivo, execução autorizada' % (srv.get('nome'), amb))
 
     cenarios = [c for c in suite.get('cenarios', []) if not filtro or c['id'] in filtro]
-    resultados = []
-    for c in cenarios:
-        print('== %s — %s' % (c['id'], c.get('descricao', '')))
-        r = executar_cenario(fl, suite, c, simular)
-        for ch in r['checks']:
-            print('  %s %s · %s: esperado %s, observado %s' % ('OK ' if ch['ok'] else 'XX ', ch['onde'], ch['item'],
-                                                              json.dumps(ch['esperado'], ensure_ascii=False),
-                                                              json.dumps(ch['observado'], ensure_ascii=False)))
-        for e in r['erros']:
-            print('  ERRO ' + e)
-        print('  → %s' % r['resultado'])
-        resultados.append(r)
+    desconhecidos = [f for f in filtro if f not in [c['id'] for c in suite.get('cenarios', [])]]
+    if desconhecidos:
+        print('cenário inexistente na suíte: %s' % ', '.join(desconhecidos))
+        return 2
+    antes = suite.get('antesDaRodada', []) if ganchos else []
+    depois = suite.get('depoisDaRodada', []) if ganchos else []
+    valores = {'execucao': suite['execucao'], 'ultima': '<ultima>', 'solicitacoes': ''}
+    if not simular and (antes or depois):
+        ultima = ultima_solicitacao(fl)
+        if ultima is None:
+            print('ABORTADO: não consegui ler a última solicitação (PROCES_WORKFLOW) para os ganchos da rodada')
+            return 2
+        valores['ultima'] = ultima
+        print('última solicitação antes da rodada: %d' % ultima)
+
+    resultados, fundos, rodada = [], [], {'antes': [], 'depois': []}
+    try:
+        for i, g in enumerate(antes, 1):
+            cmd = montar_comando(g, valores)
+            if simular:
+                print('  antesDaRodada %d%s: %s' % (i, ' (em paralelo)' if g.get('fundo') else '', cmd))
+            elif g.get('fundo'):
+                fundos.append(iniciar_fundo(g, cmd, fl.env, saida, suite['execucao'], i))
+                rodada['antes'].append({'comando': cmd, 'fundo': True, 'pid': fundos[-1]['proc'].pid,
+                                        'log': fundos[-1]['log']})
+            else:
+                p = subprocess.run(['/bin/bash', '-c', cmd], env=fl.env, capture_output=True, text=True,
+                                   timeout=float(g.get('tempoLimite') or 300))
+                print('  antesDaRodada %d (código %d): %s' % (i, p.returncode, g.get('descricao', cmd)))
+                rodada['antes'].append({'comando': cmd, 'codigo': p.returncode,
+                                        'saida': ((p.stdout or '') + (p.stderr or ''))[-2000:]})
+                if p.returncode != 0:
+                    print('ABORTADO: antesDaRodada %d terminou com código %d' % (i, p.returncode))
+                    print(((p.stdout or '') + (p.stderr or ''))[-1000:])
+                    return 2
+        if fundos:
+            time.sleep(float(antes[0].get('esperarInicio') or 2))  # o laço em paralelo sobe antes do 1º cenário
+
+        for c in cenarios:
+            print('== %s — %s' % (c['id'], c.get('descricao', '')))
+            r = executar_cenario(fl, suite, c, simular)
+            for ch in r['checks']:
+                print('  %s %s · %s: esperado %s, observado %s' % ('OK ' if ch['ok'] else 'XX ', ch['onde'], ch['item'],
+                                                                  json.dumps(ch['esperado'], ensure_ascii=False),
+                                                                  json.dumps(ch['observado'], ensure_ascii=False)))
+            for e in r['erros']:
+                print('  ERRO ' + e)
+            print('  → %s' % r['resultado'])
+            resultados.append(r)
+    finally:
+        encerrar_fundo(fundos)  # nada da rodada fica vivo, nem com erro ou Ctrl-C
+
+    valores['solicitacoes'] = ' '.join(str(r['solicitacao']) for r in resultados if r.get('solicitacao'))
+    depois_falhou = False
+    for i, g in enumerate(depois, 1):
+        cmd = montar_comando(g, valores)
+        if simular:
+            print('  depoisDaRodada %d: %s' % (i, cmd))
+            continue
+        try:
+            p = subprocess.run(['/bin/bash', '-c', cmd], env=fl.env, capture_output=True, text=True,
+                               timeout=float(g.get('tempoLimite') or 300))
+            codigo, texto = p.returncode, (p.stdout or '') + (p.stderr or '')
+        except subprocess.TimeoutExpired:
+            codigo, texto = 'tempo esgotado', ''
+        print('  depoisDaRodada %d (código %s): %s' % (i, codigo, g.get('descricao', cmd)))
+        if texto.strip():
+            print('    ' + texto.strip()[-1500:].replace('\n', '\n    '))
+        rodada['depois'].append({'comando': cmd, 'codigo': codigo, 'saida': texto[-2000:]})
+        depois_falhou = depois_falhou or codigo != 0
 
     if simular:
         return 0
+
+    # Solicitações da rodada ainda abertas: nada fica esquecido no meio do fluxo
+    abertas = []
+    for r in resultados:
+        if r.get('solicitacao'):
+            est, erro = fl.estado(r['solicitacao'])
+            r['final'] = {'status': est and est.get('status'), 'etapa': est and est.get('etapa')}
+            if est and est.get('status') == 'OPEN':
+                abertas.append('%d (%s) na etapa %s' % (r['solicitacao'], r['id'], est.get('etapa')))
+    print('\nabertas: %s' % ('; '.join(abertas) if abertas else 'nenhuma'))
     os.makedirs(saida, exist_ok=True)
-    destino = os.path.join(saida, 'fluxo-%s-%s.json' % (re.sub(r'\W+', '_', suite['processo'])[:40], suite['execucao']))
+    sufixo = ('-' + re.sub(r'\W+', '_', '_'.join(filtro))[:60]) if filtro else ''
+    destino = os.path.join(saida, 'fluxo-%s-%s%s.json' % (re.sub(r'\W+', '_', suite['processo'])[:40],
+                                                         suite['execucao'], sufixo))
+    if os.path.exists(destino):  # mesma execucao fixada na suíte: não sobrescreve
+        destino = destino[:-5] + time.strftime('-%H%M%S') + '.json'
     json.dump({'execucao': suite['execucao'], 'processo': suite['processo'], 'servidor': srv.get('nome'),
+               'ultimaAntesDaRodada': valores['ultima'] if isinstance(valores['ultima'], int) else None, 'rodada': rodada, 'abertas': abertas,
                'cenarios': resultados}, open(destino, 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
     placar = {}
     for r in resultados:
         placar[r['resultado']] = placar.get(r['resultado'], 0) + 1
     print('\nplacar: %s · resultado em %s' % (json.dumps(placar, ensure_ascii=False), destino))
-    return 0 if all(r['resultado'] == 'aprovado' for r in resultados) else 1
+    if depois_falhou:
+        print('ATENÇÃO: algum depoisDaRodada terminou com código diferente de 0 (ver acima)')
+    return 0 if all(r['resultado'] == 'aprovado' for r in resultados) and not depois_falhou else 1
 
 
 if __name__ == '__main__':
